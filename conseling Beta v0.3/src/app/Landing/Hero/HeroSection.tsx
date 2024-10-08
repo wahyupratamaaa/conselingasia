@@ -54,7 +54,7 @@ export default function HeroSection() {
           Kami disini berperan sebagai pendamping dan penanganan masalah belajar
           mahasiswa dari aspek psikologis di Institut Asia Malang.
         </p>
-        <button
+        {/* <button
           className="lg:hidden text-white font-sans w-25 font-bold bg-customBlue rounded-md active:bg-customBlueHover"
           style={{
             margin: 5,
@@ -63,7 +63,7 @@ export default function HeroSection() {
           }}
         >
           Mulai Konsultasi
-        </button>
+        </button> */}
       </div>
     </div>
   );
