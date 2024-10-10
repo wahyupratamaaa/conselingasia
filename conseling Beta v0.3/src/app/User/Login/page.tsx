@@ -1,3 +1,5 @@
+
+
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,45 +34,38 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/home", {
+      const res = await fetch("http://localhost:5000/api/home/login", { // periksa endpoint login
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       // Cek apakah respons berhasil
       if (!res.ok) {
-        throw new Error("Login gagal");
+        throw new Error("access salah");
       }
-
+  
       const data = await res.json();
-      //  (data.status !== 200) {
-      // }
-      // // console.log('Error:', data.data);
-      if (data.status != "failed") {
+  
+      if (data.status === "success") {
         console.log("response data:", data.status);
         router.push("/Dashboard");
         Swal.fire({
           title: "Success Login!",
           icon: "success",
         });
+      } else {
+        throw new Error(data.message || "Login gagal, silakan coba lagi.");
       }
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Oops...",
-      //   text: "Login gagal, silakan coba lagi.",
-      // });
-
-      // Arahkan ke dashboard jika login sukses
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       setErrorMessage("Login gagal, silakan coba lagi.");
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Login gagal, silakan coba lagi.",
+        text: error.message || "Login gagal, silakan coba lagi.",
       });
     }
   };
@@ -79,7 +74,7 @@ export default function Home() {
     <div className="relative min-h-screen px-10">
       <div className="w-screen flex justify-start">
         <a
-          href="/"
+          href="/Dashboard"
           className={`lg:block ${
             isHover ? "text-white bg-gray-600" : "text-black"
           } px-3 items-center m-4 rounded-md font-sans font-bold active:bg-customBlueHover no-underline border border-bg`}

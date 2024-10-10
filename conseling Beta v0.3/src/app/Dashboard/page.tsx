@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { IoMdArrowDropdown } from "react-icons/io";
 import TextDashboard from "../components/Layout/textDashboard";
 import React, { useState } from "react";
+
 // import Swal from "sweetalert2";
 // import Swal from "sweetalert2/dist/sweetalert2.js";
 import Swal from "sweetalert2";
@@ -39,7 +40,7 @@ export default function Dashboard() {
     });
 
     if (result.isConfirmed) {
-      router.push("/users/login");
+      router.push("../User/Login/page");
     }
   };
 
@@ -75,7 +76,7 @@ export default function Dashboard() {
             <p className="mt-2">Artikel</p>
             <button
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
-              onClick={() => handleNavigation("../Article")}
+              onClick={() => handleNavigation("/Dashboard/Article")}
             >
               CRUD &rarr;
             </button>
@@ -87,7 +88,7 @@ export default function Dashboard() {
             <p className="mt-2">Pengumuman</p>
             <button
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
-              onClick={() => handleNavigation("../Pengumuman")}
+              onClick={() => handleNavigation("/Dashboard/Pengumuman")}
             >
               CRUD &rarr;
             </button>
@@ -99,7 +100,7 @@ export default function Dashboard() {
             <p className="mt-2">User</p>
             <button
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
-              onClick={() => handleNavigation("/components/CreateUser")}
+              onClick={() => handleNavigation("/Dashboard/Daftar")}
             >
               CRUD &rarr;
             </button>
