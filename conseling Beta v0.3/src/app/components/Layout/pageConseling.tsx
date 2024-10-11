@@ -107,10 +107,10 @@ export default function Home() {
           </li>
           <li>
             <a
-              href="/User/Register"
+              href="/Dashboard/Daftar"
               className="block py-2 px-3 rounded hover:bg-gray-700"
             >
-              Register
+              Tambah User
             </a>
           </li>
         </ul>

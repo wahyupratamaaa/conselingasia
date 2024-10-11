@@ -1,130 +1,253 @@
+
 "use client";
-import { useState } from "react";
-import ShowEye from "@/app/components/Layout/showEye"; // Pastikan nama file sesuai dengan import
+import React, { useState, useEffect } from "react";
+import ShowEye from "@/app/components/Layout/showEye";
 import TextDashboard from "@/app/components/Layout/textDashboard";
 import { RiEditFill } from "react-icons/ri";
 import { MdAutoDelete } from "react-icons/md";
+import Swal from "sweetalert2"; // Pastikan SweetAlert2 diimport
 
+type User = {
+  id: number;
+  name: string;
+  username: string;
+};
 
+const UserCreate: React.FC = () => {
+  const [name, setName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [editUserId, setEditUserId] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-export default function Tambah() {
-  const [showPassword1, setShowPassword1] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  const togglePasswordVisibility1 = () => {
-    setShowPassword1(!showPassword1);
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/home");
+      const data = await response.json();
+      if (data.status === "success") {
+        setUsers(data.data);
+      } else {
+        console.error("Error fetching users:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
-  const togglePasswordVisibility2 = () => {
-    setShowPassword2(!showPassword2);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (!username || !password) return;
+
+    const userData = {
+      username,
+      password,
+      name, // Pastikan name dikirimkan jika diperlukan
+    };
+
+    try {
+      const response = editUserId
+        ? await fetch(`http://localhost:5000/api/home/${editUserId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password, name }), // Kirim name ke backend
+          })
+        : await fetch("http://localhost:5000/api/home", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password, name }), // Kirim name ke backend
+          });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error:", errorData.message);
+        return;
+      }
+
+      if (editUserId) {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === editUserId ? { ...user, name, username } : user
+          )
+        );
+        Swal.fire({
+            title: "Updated!",
+            text: "Data suksess diubah!",
+            icon: "success",
+          });
+      } else {
+        const newUser = { id: Math.random(), name, username };
+        setUsers((prevUsers) => [newUser, ...prevUsers]);
+        Swal.fire({
+            title: "Berhasil!",
+            text: "Data pengguna berhasil didaftarkan!",
+            icon: "success",
+          });
+      }
+
+      setName("");
+      setUsername("");
+      setPassword("");
+      setEditUserId(null);
+    } catch (error) {
+      console.error("Error during fetch:", error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const result = await Swal.fire({
+        title: "Apa kamu yakin?",
+        text: "Data tidak dapat dipulihkan ketika di hapus!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Delete user!",
+      });
+
+      if (result.isConfirmed) {
+        await fetch(`http://localhost:5000/api/home/${id}`, {
+          method: 'DELETE',
+        });
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "User berhasil dihapus!",
+          icon: "success",
+        });
+
+        // Refresh data setelah penghapusan
+        fetchUsers();
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Something went wrong during deletion.",
+        icon: "error",
+      });
+    }
+  };
+
+  const handleEdit = (user: User) => {
+    setName(user.name); // Pastikan setName memuat nilai yang benar
+    setUsername(user.username);
+    setEditUserId(user.id);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
       <TextDashboard />
-      <h1 className="text-3xl font-bold mt-10">Registrasi</h1>
+      <h1 className="text-3xl font-bold mt-10">Registrasi Pengguna</h1>
       <div className="flex-1 flex justify-center">
-        <div className="text-1xl font-sm flex flex-col mt-4 w-full max-w-md ">
-          <input
-            type="text"
-            style={{ width: "100%", height: "50px" }}
-            className="h-10 mb-3 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Name"
-          />
-          <div className="relative flex flex-col">
+        <div className="text-1xl font-sm flex flex-col mt-4 w-full max-w-md space-x-2">
+          <form onSubmit={handleSubmit}>
             <input
-              type={showPassword1 ? "text" : "password"}
-              style={{ width: "100%", height: "50px" }}
-              className="h-10 mb-3 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-              placeholder="Password"
+              type="text"
+              className="h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)} // Pastikan setName bekerja dengan benar
+              required
             />
-            <ShowEye
-              togglePasswordVisibility={togglePasswordVisibility1}
-              showPassword={showPassword1}
-            />
-          </div>
-          <div className="relative flex flex-col">
             <input
-              type={showPassword2 ? "text" : "password"}
-              style={{ width: "100%", height: "50px" }}
-              className="h-10 mb-3 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-              placeholder="Confirm Password"
+              type="text"
+              className="h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
             />
-            <ShowEye
-              togglePasswordVisibility={togglePasswordVisibility2}
-              showPassword={showPassword2}
-            />
-          </div>
-          <div className="flex justify-end mt-4">
-            <button className="flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md border border-blue-700">
-              <span className="text-sm">Update Password</span>
-            </button>
-          </div>
+            <div className="relative flex flex-col mb-4">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="h-10 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <ShowEye
+                togglePasswordVisibility={togglePasswordVisibility}
+                showPassword={showPassword}
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                type="submit"
+                className="flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md border border-blue-700"
+              >
+                {editUserId ? "Update" : "Daftar"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
-      {/* Tambahkan bagian Data User di bawah input table */}
-      <h2 className="text-2xl font-bold mt-10">Data User</h2>
-      <div className="mt-4">
-        <div className="flex justify-between items-center mb-2">
-          <label className="text-sm">Show</label>
-          <select className="ml-2 border border-gray-300 rounded px-2 py-1">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-          <label className="ml-2 text-sm">entries</label>
-
-          <input
-            type="text"
-            placeholder="Search"
-            className="border border-gray-300 rounded-lg px-3 py-1"
-          />
-        </div>
-
-        {/* Tabel Data User */}
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4 border-b">No</th>
-              <th className="py-2 px-4 border-b">Nama</th>
-              <th className="py-2 px-4 border-b">Aksi</th>
+      {/* Tabel Pengguna */}
+      <h2 className="text-2xl font-bold mt-4">Daftar Pengguna</h2>
+      <div className="relative mt-2 max-h-[400px] overflow-y-auto">
+        <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-lg">
+          <thead className="bg-gray-200 sticky top-0 z-10 border-b border-gray-300">
+            <tr>
+              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">No</th>
+              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">Nama</th>
+              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">Username</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {[
-              { id: 1, name: "Super User" },
-              { id: 2, name: "Humas" },
-              { id: 3, name: "dokumenter" },
-              { id: 4, name: "admin konseling" },
-              { id: 5, name: "AppleWebKit231" },
-              { id: 6, name: "AppleWebKit231" },
-            ].map((user, index) => (
-              <tr key={user.id} className="text-center">
-                <td className="py-2 px-4 border-b">{index + 1}</td>
-                <td className="py-2 px-4 border-b">{user.name}</td>
-                <td className="py-2 px-4 border-b">
-                  {/* Aksi seperti edit/hapus dapat ditambahkan di sini */}
-                  <button className="text-blue-500 hover:underline">
-                  <RiEditFill/>
-                    </button> | 
-                  <button className="text-red-500 hover:underline">
-                    <MdAutoDelete/> 
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {users.length === 0 ? (
+              // Menampilkan 10 baris kosong jika tidak ada data
+              Array.from({ length: 10 }).map((_, index) => (
+                <tr key={index} className="hover:bg-gray-100 transition-colors">
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">{index + 1}</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
+                </tr>
+              ))
+            ) : (
+              // Menampilkan data pengguna dan menambahkan baris kosong hingga jumlah baris = 10
+              users.concat(Array.from({ length: 10 - users.length })).map((user, index) => (
+                <tr key={user?.id || index} className="hover:bg-gray-100 transition-colors">
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">{index + 1}</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">{user?.name || '-'}</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center">{user?.username || '-'}</td>
+                  <td className="py-2 px-4 border-t border-gray-300 text-center flex justify-center space-x-2">
+                    <RiEditFill
+                      onClick={() => handleEdit(user)}
+                      className="text-blue-500 cursor-pointer hover:text-blue-600"
+                      title="Edit"
+                    />
+                    <MdAutoDelete
+                      onClick={() => handleDelete(user.id)}
+                      className="text-red-500 cursor-pointer hover:text-red-600"
+                      title="Delete"
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-        <div className="flex justify-between items-center mt-4">
-          <span>Showing 1 to 6 of 6 entries</span>
-          <div className="flex space-x-2">
-            <button className="px-3 py-1 border border-gray-300 rounded">Previous</button>
-            <button className="px-3 py-1 border border-gray-300 rounded">1</button>
-            <button className="px-3 py-1 border border-gray-300 rounded">Next</button>
-          </div>
-        </div>
       </div>
     </div>
   );
-}
+};
+
+export default UserCreate;

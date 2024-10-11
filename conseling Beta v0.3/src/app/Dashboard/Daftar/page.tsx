@@ -6,9 +6,8 @@ export default function UserNew() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
       <Layout />
-      <div className="flex-1 overflow-auto">
+
         <User />
-      </div>
     </div>
   );
 }
