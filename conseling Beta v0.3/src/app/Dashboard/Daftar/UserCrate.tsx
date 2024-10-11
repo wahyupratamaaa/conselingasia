@@ -1,4 +1,5 @@
 
+
 "use client";
 import React, { useState, useEffect } from "react";
 import ShowEye from "@/app/components/Layout/showEye";
@@ -25,12 +26,14 @@ const UserCreate: React.FC = () => {
     fetchUsers();
   }, []);
 
+  // Fetch users dan sort berdasarkan id terbaru
   const fetchUsers = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/home");
       const data = await response.json();
       if (data.status === "success") {
-        setUsers(data.data);
+        const sortedUsers = data.data.sort((a: User, b: User) => b.id - a.id); // Urutkan berdasarkan id, terbaru di atas
+        setUsers(sortedUsers);
       } else {
         console.error("Error fetching users:", data.message);
       }
@@ -153,12 +156,13 @@ const UserCreate: React.FC = () => {
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
       <TextDashboard />
       <h1 className="text-3xl font-bold mt-10">Registrasi Pengguna</h1>
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 flex justify-start mt-10">
         <div className="text-1xl font-sm flex flex-col mt-4 w-full max-w-md space-x-2">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} 
+          >
             <input
               type="text"
-              className="h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mr-2 h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 "
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)} // Pastikan setName bekerja dengan benar
@@ -166,7 +170,7 @@ const UserCreate: React.FC = () => {
             />
             <input
               type="text"
-              className="h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-start h-10 px-4 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -245,6 +249,11 @@ const UserCreate: React.FC = () => {
             )}
           </tbody>
         </table>
+        <div className="mt-4">
+            <div className="text-bold text-gray-500">
+                Data table {users.length}
+            </div>
+        </div>
       </div>
     </div>
   );
