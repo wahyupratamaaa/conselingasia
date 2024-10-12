@@ -51,6 +51,9 @@ import { useEffect, useState } from 'react';
 const ArticlePage = () => {
   const { slug } = useParams();
 
+  const response = fetch(`http://localhost:5000/api/article/${slug}`);
+  // const data = response.json();
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
