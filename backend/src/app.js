@@ -14,7 +14,7 @@
 //   cors({
 //     origin: "http://localhost:3000",
 //     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
+    
 //   })
 // );
 
@@ -25,6 +25,8 @@
 //   app.use(morgan("combined"));
 // }
 // app.options("*", cors()); // Izinkan semua preflight request
+
+
 
 // // Body parser middleware
 // app.use(
@@ -48,6 +50,9 @@
 //   });
 // });
 
+
+
+
 // // Daftarkan Controller di Dalam Folder Controllers
 // app.use("/api", controllers);
 // // app.use("/article", Article);
@@ -69,7 +74,6 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
   })
 );
 
@@ -94,7 +98,12 @@ app.use(
     extended: true,
   })
 );
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Menyajikan folder uploads
+
+// Middleware untuk menyajikan file dari folder 'uploads'
+app.use("/uploads", express.static(path.join(__dirname, "../uploads"))); // Menyesuaikan path
+
+// Middleware untuk menyajikan file dari folder 'assets'
+app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
 // Connection test route
 app.get("/", (req, res) => {

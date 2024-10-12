@@ -1,20 +1,93 @@
 import useIsMobile from "@/app/Hooks/resizeHooks";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ServicesWrappers from "../Wrappers/ServicesWrappers";
 import Image from "next/image";
-
-import useAnimation from "@/app/Hooks/animateHooks";
 import "aos/dist/aos.css";
 import imageBlog1 from "@/../public/article/blog/blog-1.jpg";
-import imageBlog2 from "@/../public/article/blog/blog-2.jpg";
-import imageBlog3 from "@/../public/article/blog/blog-3.jpg";
-import imageAuthor1 from "@/../public/article/blog/blog-author.jpg";
-import imageAuthor2 from "@/../public/article/blog/blog-author-2.jpg";
-import imageAuthor3 from "@/../public/article/blog/blog-author-3.jpg";
+import Link from "next/link";
+
+interface Article {
+  id: number;
+  judul: string;
+  tanggal: string;
+  gambar: string;
+  isi: string;
+}
 
 export default function Article() {
   const isMobile = useIsMobile();
-  const animation = useAnimation();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const generateSlug = (judul: string) => {
+    return judul.toLowerCase().replace(/\s+/g, "-");
+  };
+
+  const fetchArticles = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/api/article");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Data dari API:", result);
+
+      // Generate slug untuk setiap artikel dan simpan di state
+      const articlesWithSlug = result.data.map((article: Article) => ({
+        ...article,
+        slug: generateSlug(article.judul), // Tambahkan slug yang di-generate dari judul
+      }));
+
+      setArticles(articlesWithSlug);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // const fetchArticles = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await fetch("http://localhost:5000/api/article");
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+
+  //     const result = await response.json();
+  //     console.log("Data dari API:", result);
+
+  //     // Ambil data artikel dari properti "data"
+  //     setArticles(result.data);
+  //   } catch (error) {
+  //     console.error("Error fetching articles:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Pemanggilan pertama kali saat komponen di-mount
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+
+    // Hanya refresh data jika modal ditutup (isModalOpen berubah jadi false)
+    if (isModalOpen) {
+      fetchArticles(); // Refresh data artikel setelah modal ditutup
+    }
+  };
+
+  if (loading) {
+    return <div>Loading data...</div>;
+  }
 
   return (
     <div
@@ -84,50 +157,51 @@ export default function Article() {
 
           <div className="container">
             <div className="row justify-content-start">
-              <div
-                className="col-xl-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="500"
-              >
-                <article
-                  className=""
-                  style={{
-                    boxShadow:
-                      "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: isMobile ? 20 : 30,
-                  }}
-                >
-                  <div className="">
-                    <Image src={imageBlog1} alt="" className="img-fluid" />
-                  </div>
-                  <h4>
-                    <a href="">Dolorum optio tempore voluptas dignissimos</a>
-                  </h4>
-                  <p>2 Jam yang lalu</p>
-                </article>
-              </div>
-              <div
-                className="col-xl-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="500"
-              >
-                <article
-                  className=""
-                  style={{
-                    boxShadow:
-                      "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: isMobile ? 20 : 30,
-                  }}
-                >
-                  <div className="post-img">
-                    <Image src={imageBlog1} alt="" className="img-fluid" />
-                  </div>
-                  <h4>
-                    <a href="">Dolorum optio tempore voluptas dignissimos</a>
-                  </h4>
-                  <p>2 Jam yang lalu</p>
-                </article>
-              </div>
+              {articles.length > 0 ? (
+                articles
+                  .slice(-3)
+                  .reverse()
+                  .map(
+                    (
+                      article,
+                      index // Mengambil 3 artikel terakhir dan membalik urutannya
+                    ) => (
+                      <div key={article.id} className="col-xl-4 col-md-6">
+                        <article
+                          className=""
+                          data-aos="fade-up"
+                          data-aos-delay="500"
+                          style={{
+                            boxShadow:
+                              "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: isMobile ? 20 : 30,
+                          }}
+                        >
+                          <div className="">
+                            <img
+                              src={`http://localhost:5000/uploads/${article.gambar}`}
+                              alt={article.judul}
+                              className="h-56"
+                            />
+                          </div>
+                          <br />
+                          <Link
+                            href={`/articles/${generateSlug(article.judul)}`}
+                          >
+                            <h4>{article.judul}</h4>
+                          </Link>
+                          <p>{article.tanggal}</p>
+                        </article>
+                      </div>
+                    )
+                  )
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    No articles found.
+                  </td>
+                </tr>
+              )}
             </div>
           </div>
         </article>

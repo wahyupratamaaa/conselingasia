@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
@@ -64,11 +62,6 @@ export default function ModalFadeArticle({
       });
     }
   };
-
-  const generateSlug = (judul: string): string => {
-    return judul.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-  };
-  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 ">

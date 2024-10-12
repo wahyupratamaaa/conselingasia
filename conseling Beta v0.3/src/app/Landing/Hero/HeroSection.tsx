@@ -56,8 +56,6 @@ export default function HeroSection() {
         </p>
         <button
           className="lg:hidden text-white font-sans w-25 font-bold bg-customBlue rounded-md active:bg-customBlueHover"
-          // link
-          // href="/users/login"
           style={{
             margin: 5,
             width: 70,

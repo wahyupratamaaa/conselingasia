@@ -1,156 +1,117 @@
-// "use client";
-// import React from "react";
-// import { FaPlus } from "react-icons/fa";
-// import TextDashboard from "../../components/Layout/textDashboard";
-// import ModalFadePengumuman from "@/app/components/Layout/FadePengumuman";
-// // import ShowEye from "../Password/showEye";
-// import { AiTwotoneDelete } from "react-icons/ai";
-// import { BiSolidEdit } from "react-icons/bi";
-// import { PiEyeSlash } from "react-icons/pi";
-
-// export default function Pengumuman() {
-//   const [isModalOpen, setModalOpen] = React.useState(false); // State to manage modal visibility
-
-//   const toggleModal = () => {
-//     setModalOpen(!isModalOpen); // Toggle the modal state
-//   };
-
-//   const data = [
-//     {
-//       no: 1,
-//       judul: "Seminar Kesehatan Mental 2022 | Kuliah Asik Tanpa Mengusik",
-//       tanggal: "2022-10-29",
-//       gambar: "URL ke Gambar atau Deskripsi",
-//     },
-//     {
-//       no: 1,
-//       judul: "Seminar Kesehatan Mental 2022 | Kuliah Asik Tanpa Mengusik",
-//       tanggal: "2022-10-29",
-//       gambar: "URL ke Gambar atau Deskripsi",
-//     },
-//     {
-//       no: 1,
-//       judul: "Seminar Kesehatan Mental 2022 | Kuliah Asik Tanpa Mengusik",
-//       tanggal: "2022-10-29",
-//       gambar: "URL ke Gambar atau Deskripsi",
-//     },
-//   ];
-
-//   return (
-//     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
-//       <TextDashboard />
-//       {/* Judul */}
-//       <div className="flex justify-between items-center mb-4 mt-10">
-//         <h2 className="text-3xl font-bold">Data Pengumuman</h2>
-//         <button
-//           className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-//           onClick={toggleModal} // Call toggleModal to open the modal
-//         >
-//           <FaPlus />
-//         </button>
-//       </div>
-
-//       {/* Tabel */}
-//       <div className="overflow-x-auto border rounded-lg shadow-md">
-//         <table className="min-w-full border-collapse border border-gray-300">
-//           <thead>
-//             <tr className="bg-gray-200">
-//               <th className="px-4 py-2 border border-gray-300">No</th>
-//               <th className="px-4 py-2 border border-gray-300">Judul</th>
-//               <th className="px-4 py-2 border border-gray-300">Tanggal</th>
-//               <th className="px-4 py-2 border border-gray-300">Gambar</th>
-//               <th className="px-4 py-2 border border-gray-300">Status</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {data.map((item, index) => (
-//               <tr key={index} className="text-center">
-//                 <td className="px-4 py-2 border border-gray-300">{item.no}</td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   {item.judul}
-//                 </td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   {item.tanggal}
-//                 </td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   {item.gambar}
-//                 </td>
-//                 <td className="px-4 py-2 border border-gray-300 ">
-//                   <div className="flex items-center justify-center cursor-pointer">
-//                     <BiSolidEdit className="mx-2" />
-//                     <AiTwotoneDelete className="mx-2" />
-//                     <PiEyeSlash className="mx-2" />
-//                   </div>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       {/* Bagian Pagination */}
-//       <div className="flex justify-between items-center mt-4">
-//         <span>Showing 1 to 1 of 1 entries</span>
-//         <div className="flex space-x-2">
-//           <button className="bg-gray-300 px-2 py-1 rounded">Previous</button>
-//           <button className="bg-gray-300 px-2 py-1 rounded">1</button>
-//           <button className="bg-gray-300 px-2 py-1 rounded">Next</button>
-//         </div>
-//       </div>
-
-//       {/* Render the modal if it is open */}
-//       {isModalOpen && <ModalFadePengumuman toggleModal={toggleModal} />}
-//     </div>
-//   );
-// }
 
 
 // "use client";
+
 // import React, { useEffect, useState } from "react";
 // import { FaPlus } from "react-icons/fa";
 // import TextDashboard from "@/app/components/Layout/textDashboard";
-// import ModalFadePengumuman from "@/app/components/Layout/FadePengumuman";
+// import ModalFadeNews from "@/app/components/Layout/FadePengumuman";
 // import { AiTwotoneDelete } from "react-icons/ai";
 // import { BiSolidEdit } from "react-icons/bi";
 // import { PiEyeSlash } from "react-icons/pi";
+// import axios from "axios";
 
-// interface Pengumuman {
-//   no: number;
+// // Definisikan interface untuk artikel
+// interface News {
+//   id: number;
 //   judul: string;
 //   tanggal: string;
 //   gambar: string;
 // }
 
-// export default function Pengumuman() {
-//   const [isModalOpen, setModalOpen] = useState(false);
-//   const [data, setData] = useState<Pengumuman[]>([]);
+// // Fungsi deletePengumuman untuk menghapus artikel
+// const deleteNews = async (id: number): Promise<void> => {
+//   // Menampilkan alert konfirmasi dan menghentikan proses jika pengguna memilih "Cancel"
+//   const isConfirmed = window.confirm("Are you sure you want to delete this news?");
   
-//   const toggleModal = () => {
-//     setModalOpen(!isModalOpen);
-//   };
+//   if (!isConfirmed) {
+//     console.log("Pengumuman deletion cancelled by user.");
+//     window.location.reload();
+//     return; // Menghentikan eksekusi jika pengguna membatalkan
+//   }
 
-//   const fetchData = async () => {
-//     const response = await fetch("http://localhost:5000/api/pengumuman");
-//     const result = await response.json();
-//     if (result.status === "success") {
-//       setData(result.data);
+//   try {
+//     const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
+//       method: 'DELETE',
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to delete article with id: ${id}`);
+//     }
+
+//     console.log(`Pengumuman with id: ${id} deleted successfully`);
+//   } catch (error) {
+//     // Pastikan error memiliki properti 'message' jika bertipe 'Error'
+//     if (error instanceof Error) {
+//       console.error("Error deleting article:", error.message);
+//     } else {
+//       console.error("Unknown error occurred while deleting article", error);
+//     }
+//     throw error;
+//   }
+// };
+
+// // Komponen utama untuk CRUD artikel
+// export default function NewsCrud() {
+//   const [isModalOpen, setModalOpen] = useState(false);
+//   const [news, setNews] = useState<News[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // Fungsi untuk mengambil data artikel dari API
+//   const fetchNews = async () => {
+//     try {
+//       setLoading(true);
+//       const response = await fetch("http://localhost:5000/api/pengumuman");
+
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+
+//       const result = await response.json();
+//       console.log("Data dari API:", result);
+
+//       // Ambil data artikel dari properti "data"
+//       setNews(result.data);
+//     } catch (error) {
+//       console.error("Error fetching articles:", error);
+//     } finally {
+//       setLoading(false);
 //     }
 //   };
 
+//   // Fungsi untuk menghapus artikel
 //   const handleDelete = async (id: number) => {
-//     await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
-//       method: 'DELETE',
-//     });
-//     fetchData(); // Refresh data after deletion
+//     try {
+//       await deleteNews(id);
+//       setNews(news.filter(news => news.id !== id)); // Menghapus artikel dari state
+//     } catch (error) {
+//       console.error("Error deleting article:", error);
+//     }
 //   };
 
+//   // Pemanggilan pertama kali saat komponen di-mount
 //   useEffect(() => {
-//     fetchData();
+//     fetchNews();
 //   }, []);
+
+//   // Toggle modal dan refresh data saat modal ditutup
+//   const toggleModal = () => {
+//     setModalOpen(!isModalOpen);
+
+//     // Hanya refresh data jika modal ditutup (isModalOpen berubah jadi false)
+//     if (isModalOpen) {
+//       fetchNews(); // Refresh data artikel setelah modal ditutup
+//     }
+//   };
+
+//   if (loading) {
+//     return <div>Loading data...</div>;
+//   }
 
 //   return (
 //     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
 //       <TextDashboard />
+//       {/* Title */}
 //       <div className="flex justify-between items-center mb-4 mt-10">
 //         <h2 className="text-3xl font-bold">Data Pengumuman</h2>
 //         <button
@@ -161,6 +122,7 @@
 //         </button>
 //       </div>
 
+//       {/* Table */}
 //       <div className="overflow-x-auto border rounded-lg shadow-md">
 //         <table className="min-w-full border-collapse border border-gray-300">
 //           <thead>
@@ -173,212 +135,152 @@
 //             </tr>
 //           </thead>
 //           <tbody>
-//             {data.map((item, index) => (
-//               <tr key={index} className="text-center">
-//                 <td className="px-4 py-2 border border-gray-300">{item.no}</td>
-//                 <td className="px-4 py-2 border border-gray-300">{item.judul}</td>
-//                 <td className="px-4 py-2 border border-gray-300">{item.tanggal}</td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   <img
-//                     src={`http://localhost:5000/uploads/${item.gambar}`} 
-//                     alt={item.judul}
-//                     className="w-24 h-24 object-cover" // Gambar ditampilkan dengan ukuran custom
-//                   />
-//                 </td>
-//                 <td className="px-4 py-2 border border-gray-300 ">
-//                   <div className="flex items-center justify-center cursor-pointer">
-//                     <BiSolidEdit className="mx-2" />
-//                     <AiTwotoneDelete className="mx-2" onClick={() => handleDelete(item.no)} />
-//                     <PiEyeSlash className="mx-2" />
-//                   </div>
+//             {news.length > 0 ? (
+//               news.map((news, index) => (
+//                 <tr key={news.id} className="text-center">
+//                   <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
+//                   <td className="px-4 py-2 border border-gray-300">{news.judul}</td>
+//                   <td className="px-4 py-2 border border-gray-300">{news.tanggal}</td>
+//                   <td className="px-4 py-2 border border-gray-300">
+//                     <img
+//                       src={`http://localhost:5000/uploads/${news.gambar}`}
+//                       alt={news.judul}
+//                       className="h-20 mx-auto"
+//                     />
+//                   </td>
+//                   <td className="px-4 py-2 mt-1 flex flex-row space-x-3 cursor-pointer">
+//                     <BiSolidEdit />
+//                     <AiTwotoneDelete onClick={() => handleDelete(news.id)} />
+//                     <PiEyeSlash />
+//                   </td>
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan={5} className="text-center py-4">
+//                   No articles found.
 //                 </td>
 //               </tr>
-//             ))}
+//             )}
 //           </tbody>
 //         </table>
 //       </div>
 
-//       {/* Render the modal if it is open */}
-//       {isModalOpen && <ModalFadePengumuman toggleModal={toggleModal} onDataAdded={fetchData} />}
+//       {/* Pagination Section */}
+//       <div className="flex justify-between items-center mt-4">
+//         <span>Showing {news.length} entries</span>
+//         <div className="flex space-x-2">
+//           <button className="bg-gray-300 px-2 py-1 rounded">Previous</button>
+//           <button className="bg-gray-300 px-2 py-1 rounded">1</button>
+//           <button className="bg-gray-300 px-2 py-1 rounded">Next</button>
+//         </div>
+//       </div>
+
+//       {/* Modal Component */}
+//       {isModalOpen && <ModalFadeNews toggleModal={toggleModal} />}
 //     </div>
 //   );
 // }
 
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import { FaPlus } from "react-icons/fa";
-// import TextDashboard from "@/app/components/Layout/textDashboard";
-// import ModalFadePengumuman from "@/app/components/Layout/FadePengumuman";
-// import { AiTwotoneDelete } from "react-icons/ai";
-// import { BiSolidEdit } from "react-icons/bi";
-// import { PiEyeSlash } from "react-icons/pi";
-// import axios from "axios";
-
-// interface Pengumuman {
-//   no: number;
-//   judul: string;
-//   tanggal: string;
-//   gambar: string;
-// }
-
-// export default function Pengumuman() {
-//   const [isModalOpen, setModalOpen] = useState(false); 
-//   const [pengumumanList, setPengumumanList] = useState<Pengumuman[]>([]);
-//   const [selectedPengumuman, setSelectedPengumuman] = useState<Pengumuman | null>(null);
-
-//   const toggleModal = () => {
-//     setModalOpen(!isModalOpen); 
-//     if (isModalOpen) {
-//       setSelectedPengumuman(null);
-//     }
-//   };
-
-//   const fetchPengumuman = async () => {
-//     try {
-//       const response = await axios.get("http://localhost:5000/api/pengumuman");
-//       // Hanya menyimpan pengumuman terbaru
-//       setPengumumanList(response.data.data.slice(-1)); 
-//     } catch (error) {
-//       console.error("Error fetching pengumuman:", error);
-//     }
-//   };
-
-//   const handleDelete = async (id: number) => {
-//     try {
-//       await axios.delete(`http://localhost:5000/api/pengumuman/${id}`);
-//       fetchPengumuman(); 
-//     } catch (error) {
-//       console.error("Error deleting pengumuman:", error);
-//     }
-//   };
-
-//   const handleEdit = (pengumuman: Pengumuman) => {
-//     setSelectedPengumuman(pengumuman);
-//     setModalOpen(true);
-//   };
-
-//   useEffect(() => {
-//     fetchPengumuman();
-//   }, []);
-
-//   return (
-//     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
-//       <TextDashboard />
-//       <div className="flex justify-between items-center mb-4 mt-10">
-//         <h2 className="text-3xl font-bold">Data Pengumuman</h2>
-//         <button
-//           className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-//           onClick={toggleModal} 
-//         >
-//           <FaPlus />
-//         </button>
-//       </div>
-
-//       <div className="overflow-x-auto border rounded-lg shadow-md">
-//         <table className="min-w-full border-collapse border border-gray-300">
-//           <thead>
-//             <tr className="bg-gray-200">
-//               <th className="px-4 py-2 border border-gray-300">No</th>
-//               <th className="px-4 py-2 border border-gray-300">Judul</th>
-//               <th className="px-4 py-2 border border-gray-300">Tanggal</th>
-//               <th className="px-4 py-2 border border-gray-300">Gambar</th>
-//               <th className="px-4 py-2 border border-gray-300">Aksi</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {pengumumanList.map((item, index) => (
-//               <tr key={index} className="text-center">
-//                 <td className="px-4 py-2 border border-gray-300">{item.no}</td>
-//                 <td className="px-4 py-2 border border-gray-300">{item.judul}</td>
-//                 <td className="px-4 py-2 border border-gray-300">{item.tanggal}</td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   <img src={`http://localhost:5000/uploads/${item.gambar}`} alt={item.judul} className="h-16" />
-//                 </td>
-//                 <td className="px-4 py-2 border border-gray-300">
-//                   <div className="flex items-center justify-center cursor-pointer">
-//                     <BiSolidEdit className="mx-2" onClick={() => handleEdit(item)} />
-//                     <AiTwotoneDelete className="mx-2" onClick={() => handleDelete(item.no)} />
-//                     <PiEyeSlash className="mx-2" />
-//                   </div>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       {/* Render the modal if it is open */}
-//       {isModalOpen && (
-//         <ModalFadePengumuman
-//           toggleModal={toggleModal}
-//           fetchPengumuman={fetchPengumuman}
-//           selectedPengumuman={selectedPengumuman}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-// // // code bener
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import TextDashboard from "@/app/components/Layout/textDashboard";
-import ModalFadePengumuman from "@/app/components/Layout/FadePengumuman";
+import ModalFadeNews from "@/app/components/Layout/FadePengumuman";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { PiEyeSlash } from "react-icons/pi";
-import axios from "axios";
 
-// Definisikan tipe Pengumuman
-interface Pengumuman {
-  no: number;
+// Definisikan interface untuk artikel
+interface News {
+  id: number;
   judul: string;
   tanggal: string;
-  gambar: string; // Gambar yang akan ditampilkan
-  id?: string; // Optional ID
+  gambar: string;
 }
 
-export default function PengumumanCrud() {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [pengumuman, setPengumuman] = useState<Pengumuman[]>([]);
-  const [selectedPengumuman, setSelectedPengumuman] = useState<Pengumuman | null>(null);
+// Fungsi deletePengumuman untuk menghapus artikel
+const deleteNews = async (id: number): Promise<void> => {
+  const isConfirmed = window.confirm("Are you sure you want to delete this news?");
+  
+  if (!isConfirmed) {
+    return; // Batalkan penghapusan jika user menekan "Cancel"
+  }
 
+  try {
+    const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete article with id: ${id}`);
+    }
+
+    console.log(`Pengumuman with id: ${id} deleted successfully`);
+  } catch (error) {
+    console.error("Error deleting article:", error);
+  }
+};
+
+// Komponen utama untuk CRUD artikel
+export default function NewsCrud() {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fungsi untuk mengambil data artikel dari API
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/api/pengumuman");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setNews(result.data);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fungsi untuk menghapus artikel
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteNews(id);
+      fetchNews(); // Refresh data artikel setelah delete
+    } catch (error) {
+      console.error("Error deleting article:", error);
+    }
+  };
+
+  // Pemanggilan pertama kali saat komponen di-mount
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  // Toggle modal dan refresh data saat modal ditutup
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
+
+    // Hanya refresh data jika modal ditutup (isModalOpen berubah jadi false)
+    if (isModalOpen) {
+      fetchNews();
+    }
   };
 
-  const fetchPengumuman = async () => {
-    const response = await axios.get("http://localhost:5000/api/pengumuman");
-    setPengumuman(response.data.data);
-  };
-
-  const addPengumuman = async (newPengumuman: { judul: string; tanggal: string; gambar: File }) => {
-    const formData = new FormData();
-    formData.append("judul", newPengumuman.judul);
-    formData.append("tanggal", newPengumuman.tanggal);
-    formData.append("gambar", newPengumuman.gambar);
-
-    await axios.post("http://localhost:5000/api/pengumuman", formData);
-    fetchPengumuman();
-    toggleModal();
-  };
-
-  const deletePengumuman = async (id: string) => {
-    await axios.delete(`http://localhost:5000/api/pengumuman/${id}`);
-    fetchPengumuman();
-  };
-
-  const editPengumuman = async (id: string) => {
-    // Implementasi untuk mengedit pengumuman (jika diperlukan)
-  };
-
-  useEffect(() => {
-    fetchPengumuman();
-  }, []);
+  if (loading) {
+    return <div>Loading data...</div>;
+  }
 
   return (
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
       <TextDashboard />
+      {/* Title */}
       <div className="flex justify-between items-center mb-4 mt-10">
         <h2 className="text-3xl font-bold">Data Pengumuman</h2>
         <button
@@ -389,6 +291,7 @@ export default function PengumumanCrud() {
         </button>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow-md">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
@@ -401,30 +304,48 @@ export default function PengumumanCrud() {
             </tr>
           </thead>
           <tbody>
-            {pengumuman.map((item, index) => (
-              <tr key={item.no} className="text-center">
-                <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
-                <td className="px-4 py-2 border border-gray-300">{item.judul}</td>
-                <td className="px-4 py-2 border border-gray-300">{item.tanggal}</td>
-                <td className="px-4 py-2 border border-gray-300">
-                  <img src={`http://localhost:5000/uploads/${item.gambar}`} alt={item.judul} className="w-32 h-32 object-cover" />
-                </td>
-                <td className="px-4 py-2 border border-gray-300">
-                  <div className="flex items-center justify-center cursor-pointer">
-                    <BiSolidEdit className="mx-2" onClick={() => editPengumuman(item.id!)} />
-                    <AiTwotoneDelete className="mx-2" onClick={() => deletePengumuman(item.id!)} />
-                    <PiEyeSlash className="mx-2" />
-                  </div>
+            {news.length > 0 ? (
+              news.map((news, index) => (
+                <tr key={news.id} className="text-center">
+                  <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
+                  <td className="px-4 py-2 border border-gray-300">{news.judul}</td>
+                  <td className="px-4 py-2 border border-gray-300">{news.tanggal}</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <img
+                      src={news.gambar}
+                      alt={news.judul}
+                      className="w-20 h-20 object-cover mx-auto"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <button
+                      className="text-red-600 hover:text-red-900 mr-4"
+                      onClick={() => handleDelete(news.id)}
+                    >
+                      <AiTwotoneDelete />
+                    </button>
+                    <button className="text-blue-600 hover:text-blue-900 mr-4">
+                      <BiSolidEdit />
+                    </button>
+                    <button className="text-gray-600 hover:text-gray-900">
+                      <PiEyeSlash />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center py-4">
+                  Tidak ada pengumuman.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Render the modal if it is open */}
-      {isModalOpen && <ModalFadePengumuman onNewPengumuman={addPengumuman} toggleModal={toggleModal} />}
+      {/* Modal untuk menambahkan pengumuman */}
+      {isModalOpen && <ModalFadeNews toggleModal={toggleModal} />}
     </div>
   );
 }
-// PengumumanCrud.tsx

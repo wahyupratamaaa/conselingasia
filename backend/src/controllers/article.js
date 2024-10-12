@@ -4,6 +4,9 @@ const Article = require("../models/table_article");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const slugify = require("slugify");
+
+
 
 const response = {
   status: "failed",
