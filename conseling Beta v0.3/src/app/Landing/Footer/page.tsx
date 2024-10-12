@@ -22,7 +22,8 @@ export default function Footer() {
           
         </div>
       ) : (
-        <div className="grid grid-cols-2">
+        <div>
+          <div className="grid grid-cols-2">
           <div className="flex flex-row">
             <div><Image style={{width: 150, height: 60}} src={asialogo} alt="logo" unoptimized /></div>
             <div><h2 
@@ -31,6 +32,7 @@ export default function Footer() {
           <div className="">
           <Image src={footerlogo} alt="logo" unoptimized />
           </div>
+        </div>
         </div>
       )}
     </div>

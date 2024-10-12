@@ -1,5 +1,6 @@
 // components/ScrollToTop.tsx
 import { useEffect, useState } from 'react';
+import { FaAngleDoubleUp } from "react-icons/fa";
 
 
 const ScrollToTop: React.FC = () => {
@@ -43,8 +44,8 @@ const ScrollToTop: React.FC = () => {
             zIndex: 1000,
           }}
         >
-        <img src="/arrowup.png" alt="Scroll to top" style={{width: 15, height: 15}}/>
-
+        <FaAngleDoubleUp style={{width: 20, height: 20}}/>
+      
         </button>
       )}
     </>
