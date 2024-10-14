@@ -1,21 +1,11 @@
-"use client";
+
+"use client"
 import TabConseling from "../components/Layout/pageConseling";
 import { useRouter } from "next/navigation";
 import { IoMdArrowDropdown } from "react-icons/io";
 import TextDashboard from "../components/Layout/textDashboard";
 import React, { useState } from "react";
-
-// import Swal from "sweetalert2";
-// import Swal from "sweetalert2/dist/sweetalert2.js";
 import Swal from "sweetalert2";
-
-// or via CommonJS
-// const Swal = require;
-
-interface handleNavigation {
-  path: string;
-  // cursor?: string;
-}
 
 export default function Dashboard() {
   const router = useRouter();
@@ -24,6 +14,7 @@ export default function Dashboard() {
   const toggleDown = () => {
     setIsOpen(!isOpen);
   };
+
   const closeOpen = () => {
     setIsOpen(false);
   };
@@ -31,16 +22,27 @@ export default function Dashboard() {
   const handleNavigation = (path: string) => {
     router.push(path);
   };
+
   const handleLogout = async () => {
     const result = await Swal.fire({
-      title: "Sukses Logout!",
-      // text: "You clicked the button!",
-      // className: "swal2-container",
-      icon: "success",
+      title: "Apakah Anda yakin ingin Logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Logout!",
+      cancelButtonText: "Batal",
     });
 
     if (result.isConfirmed) {
-      router.push("../User/Login/page");
+      Swal.fire({
+        title: "Sukses Logout!",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push("/User/Login");
+      });
     }
   };
 
@@ -50,14 +52,16 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 p-6">
         <TextDashboard />
-        <div className="flex justify-end items-center">
-          <h1 className="text-sm font-bold cursor-pointer" onClick={toggleDown}>
-            Super User
+        <div className="flex justify-end items-center relative">
+          <h1
+            className="text-sm font-bold cursor-pointer flex items-center"
+            onClick={toggleDown}
+          >
+            Super User <IoMdArrowDropdown className="ml-1" />
           </h1>
-          <IoMdArrowDropdown />
-          {/* <div className="flex items-center"></div> */}
+
           {isOpen && (
-            <div className="absolute right-0 mt-20 w-48 bg-white border-gray-300 rounded-lg shadow-lg z-10 overflow-hidden duration-500 hover:scale-110 hover:animate-bounce">
+            <div className="absolute right-0 mt-2 w-48 bg-white border-gray-300 rounded-lg shadow-lg z-10 overflow-hidden duration-500">
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                 onClick={handleLogout}

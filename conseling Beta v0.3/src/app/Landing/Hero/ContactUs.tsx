@@ -14,11 +14,6 @@ export default function ContactPage() {
           width: 100 + "%",
         }}
       >
-        {/* <div className="flex flex-row items-center">
-          <div className="text-center">
-            <h1 className="text-customBlueText">Kontak</h1>
-          </div>
-        </div> */}
         <h1 className="text-center">Kontak</h1>
       </div>
       <div className="w-full flex flex-col lg:flex-row">

@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "rmdir /s /q .next && mkdir .next && next dev",
+
+    "dev": "next dev",
     "build": "rmdir /s /q .next && mkdir .next && next build",
     "start": "next start",
     "lint": "next lint"

@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState, useEffect } from "react";
 import ShowEye from "@/app/components/Layout/showEye";
@@ -26,13 +24,13 @@ const UserCreate: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // Fetch users dan sort berdasarkan id terbaru
+
   const fetchUsers = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/home");
       const data = await response.json();
       if (data.status === "success") {
-        const sortedUsers = data.data.sort((a: User, b: User) => b.id - a.id); // Urutkan berdasarkan id, terbaru di atas
+        const sortedUsers = data.data.sort((a: User, b: User) => b.id - a.id); 
         setUsers(sortedUsers);
       } else {
         console.error("Error fetching users:", data.message);
@@ -208,10 +206,10 @@ const UserCreate: React.FC = () => {
         <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-lg">
           <thead className="bg-gray-200 sticky top-0 z-10 border-b border-gray-300">
             <tr>
-              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">No</th>
-              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">Nama</th>
-              <th className="py-3 px-4 border-r border-gray-300 text-left text-sm font-semibold text-gray-600 text-center">Username</th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 text-center">Aksi</th>
+              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">No</th>
+              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">Nama</th>
+              <th className="py-3 px-4 border-r border-gray-300 text-sm font-semibold text-gray-600 text-center">Username</th>
+              <th className="py-3 px-4 text-sm font-semibold text-gray-600 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>

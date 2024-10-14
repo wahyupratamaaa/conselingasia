@@ -50,27 +50,6 @@ export default function Article() {
     }
   };
 
-  // const fetchArticles = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await fetch("http://localhost:5000/api/article");
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     const result = await response.json();
-  //     console.log("Data dari API:", result);
-
-  //     // Ambil data artikel dari properti "data"
-  //     setArticles(result.data);
-  //   } catch (error) {
-  //     console.error("Error fetching articles:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
     fetchArticles();
@@ -142,6 +121,8 @@ export default function Article() {
             <h3 className="text-customBlueText mx-2">Terbaru</h3>
             <button
               className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+        
+              onClick = {() => console.log('errror')}
               style={{
                 margin: 5,
                 marginBottom: 10,

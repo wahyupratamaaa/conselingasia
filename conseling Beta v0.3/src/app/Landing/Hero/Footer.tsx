@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import footerlogo from "../../../public/footerlogo.png";
-import useIsMobile from "@/Hooks/resizeHooks";
+import useIsMobile from "../../../app/Hooks/useIsMobile";
 import socials from "../../../public/social.png";
 export default function Footer() {
   const isMobile = useIsMobile();
