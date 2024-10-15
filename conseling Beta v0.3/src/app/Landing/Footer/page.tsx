@@ -92,7 +92,7 @@ export default function Footer() {
               >
                 <h3 style={{ textAlign: "center" }}>Visi</h3>
                 <p>
-                  1. Menjadikan institut teknologi dan bisnis asia malang
+                  Menjadikan institut teknologi dan bisnis asia malang
                   sebagai kampus yang memiliki layanan prima dalam konseling
                   untuk menghasilkan mahasiswa cerdas, menguasai IPTEKS,
                   berkepribadian dan berkarakter. Misi
