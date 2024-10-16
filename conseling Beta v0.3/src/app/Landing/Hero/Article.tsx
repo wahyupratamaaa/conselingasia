@@ -16,7 +16,6 @@ interface Article {
 
 export default function Article() {
   const isMobile = useIsMobile();
-  const [isModalOpen, setModalOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,40 +49,11 @@ export default function Article() {
     }
   };
 
-  // const fetchArticles = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await fetch("http://localhost:5000/api/article");
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     const result = await response.json();
-  //     console.log("Data dari API:", result);
-
-  //     // Ambil data artikel dari properti "data"
-  //     setArticles(result.data);
-  //   } catch (error) {
-  //     console.error("Error fetching articles:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
     fetchArticles();
   }, []);
-
-  const toggleModal = () => {
-    setModalOpen(!isModalOpen);
-
-    // Hanya refresh data jika modal ditutup (isModalOpen berubah jadi false)
-    if (isModalOpen) {
-      fetchArticles(); // Refresh data artikel setelah modal ditutup
-    }
-  };
 
   if (loading) {
     return <div>Loading data...</div>;
@@ -140,6 +110,7 @@ export default function Article() {
             data-aos-duration="1000"
           >
             <h3 className="text-customBlueText mx-2">Terbaru</h3>
+            <Link href={"/Landing/Article"}>
             <button
               className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
               style={{
@@ -152,7 +123,7 @@ export default function Article() {
               }}
             >
               Baca Lainnya
-            </button>
+            </button></Link>
           </div>
 
           <div className="container">

@@ -1,17 +1,183 @@
+// import useIsMobile from "@/app/Hooks/resizeHooks";
+// import React from "react";
+// import Image from "next/image";
+// import useAnimation from "@/app/Hooks/animateHooks";
+// import "aos/dist/aos.css";
+// import imageBlog1 from "@/../public/article/blog/blog-1.jpg";
+
+// export default function Article() {
+//   const isMobile = useIsMobile();
+//   const animation = useAnimation();
+
+//   return (
+//     <div
+//       data-aos="fade-left"
+//       id="news"
+//       className="w-full"
+//       style={{
+//         marginBottom: isMobile ? 10 : 20,
+//       }}
+//     >
+//       <div
+//         style={{ marginTop: isMobile ? 100 : 100 }}
+//         className="w-full flex flex-col justify-between lg:flex-row lg:justify-center items-center"
+//       >
+//         <div
+//           className="flex justify-center text-customBlueText"
+//           style={{
+//             // backgroundColor: "#B9FF66",
+//             height: isMobile ? 46 : "auto",
+//             width: isMobile ? "80%" : "auto",
+//             // textAlign: "center",
+//             // borderRadius: 7,
+//           }}
+//         >
+//           <h1 style={{ fontSize: isMobile ? "5vw" : 40 }}>Pengumuman</h1>
+//         </div>
+//       </div>
+//       <div className=" w-full" data-aos="fade-left" data-aos-delay="200">
+//         <article
+//           className="flex relative"
+//           style={{
+//             boxShadow:
+//               "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+//             padding: isMobile ? 20 : 25,
+//           }}
+//         >
+//           <div className="relative" data-aos="fade-up">
+//             <h3 className="text-customBlueText mx-2">Terbaru</h3>
+//             <button
+//               className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+//               style={{
+//                 margin: 5,
+//                 marginBottom: 10,
+//                 padding: 5,
+//                 bottom: 2,
+//                 left: 5,
+//                 fontSize: 15,
+//               }}
+//             >
+//               Lihat Lainnya
+//             </button>
+//           </div>
+
+//           <div className="container">
+//             <div className="row justify-content-start">
+//               <div
+//                 className="col-xl-4 col-md-6"
+//                 data-aos="fade-up"
+//                 data-aos-delay="100"
+//               >
+//                 <article
+//                   className=""
+//                   style={{
+//                     boxShadow:
+//                       "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+//                     padding: isMobile ? 20 : 30,
+//                   }}
+//                 >
+//                   <div className="">
+//                     <Image src={imageBlog1} alt="" className="img-fluid" />
+//                   </div>
+//                   <h4>
+//                     <a href="">Dolorum optio tempore voluptas dignissimos</a>
+//                   </h4>
+//                   <p>2 Jam yang lalu</p>
+//                 </article>
+//               </div>
+//               <div
+//                 className="col-xl-4 col-md-6"
+//                 data-aos="fade-up"
+//                 data-aos-delay="100"
+//               >
+//                 <article
+//                   className=""
+//                   style={{
+//                     boxShadow:
+//                       "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+//                     padding: isMobile ? 20 : 30,
+//                   }}
+//                 >
+//                   <div className="post-img">
+//                     <Image src={imageBlog1} alt="" className="img-fluid" />
+//                   </div>
+//                   <h4>
+//                     <a href="">Dolorum optio tempore voluptas dignissimos</a>
+//                   </h4>
+//                   <p>2 Jam yang lalu</p>
+//                 </article>
+//               </div>
+//             </div>
+//           </div>
+//         </article>
+//       </div>
+//     </div>
+//   );
+// }
+
 import useIsMobile from "@/app/Hooks/resizeHooks";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ServicesWrappers from "../Wrappers/ServicesWrappers";
 import Image from "next/image";
-import useAnimation from "@/app/Hooks/animateHooks";
 import "aos/dist/aos.css";
 import imageBlog1 from "@/../public/article/blog/blog-1.jpg";
+import Link from "next/link";
 
-export default function Article() {
+interface News {
+  id: number;
+  judul: string;
+  tanggal: string;
+  gambar: string;
+}
+
+export default function News() {
   const isMobile = useIsMobile();
-  const animation = useAnimation();
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const generateSlug = (judul: string) => {
+    return judul.toLowerCase().replace(/\s+/g, "-");
+  };
+
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/api/pengumuman");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Data dari API:", result);
+
+      // Generate slug untuk setiap artikel dan simpan di state
+      const newsWithSlug = result.data.map((news: News) => ({
+        ...news,
+        slug: generateSlug(news.judul), // Tambahkan slug yang di-generate dari judul
+      }));
+
+      setNews(newsWithSlug);
+    } catch (error) {
+      console.error("Error fetching Pengumuman:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Pemanggilan pertama kali saat komponen di-mount
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  if (loading) {
+    return <div>Loading data pengumuman...</div>;
+  }
 
   return (
     <div
-      data-aos="fade-left"
+      data-aos="fade-right"
+      data-aos-duration="1000"
       id="news"
       className="w-full"
       style={{
@@ -19,96 +185,119 @@ export default function Article() {
       }}
     >
       <div
-        style={{ marginTop: isMobile ? 100 : 100 }}
-        className="w-full flex flex-col justify-between lg:flex-row lg:justify-center items-center"
+        style={{ marginTop: isMobile ? 100 : 50 }}
+        className="w-full flex flex-col justify-between lg:flex-row lg:justify-start items-center"
       >
         <div
           className="flex justify-center text-customBlueText"
           style={{
             // backgroundColor: "#B9FF66",
             height: isMobile ? 46 : "auto",
-            width: isMobile ? "80%" : "auto",
+            width: isMobile ? "80%" : 178,
             // textAlign: "center",
             // borderRadius: 7,
           }}
-        >
-          <h1 style={{ fontSize: isMobile ? "5vw" : 40 }}>Pengumuman</h1>
-        </div>
+        ></div>
       </div>
-      <div className=" w-full" data-aos="fade-left" data-aos-delay="200">
+      <h1 className="text-center text-customBlueText" style={{ fontSize: isMobile ? "5vw" : 40}}>
+        Pengumuman
+      </h1>
+      <div className=" w-full px-10 py-10">
         <article
           className="flex relative"
           style={{
             boxShadow:
               "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-            padding: isMobile ? 20 : 25,
+            padding: isMobile ? 20 : 25, paddingTop: 40,
           }}
         >
-          <div className="relative" data-aos="fade-up">
-            <h3 className="text-customBlueText mx-2">Terbaru</h3>
-            <button
-              className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
-              style={{
-                margin: 5,
-                marginBottom: 10,
-                padding: 5,
-                bottom: 2,
-                left: 5,
-                fontSize: 15,
-              }}
-            >
-              Lihat Lainnya
-            </button>
+          <div
+            className="relative"
+            data-aos="fade-right"
+            data-aos-duration="1000"
+          >
+            {/* <Link href={"/Landing/Article"}>
+              <button
+                className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+                style={{
+                  margin: 5,
+                  marginBottom: 10,
+                  padding: 5,
+                  bottom: 2,
+                  left: 5,
+                  fontSize: 15,
+                }}
+              >
+                Baca Pengumuman Lainnya
+              </button>
+            </Link> */}
           </div>
 
           <div className="container">
             <div className="row justify-content-start">
-              <div
-                className="col-xl-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <article
-                  className=""
-                  style={{
-                    boxShadow:
-                      "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: isMobile ? 20 : 30,
-                  }}
-                >
-                  <div className="">
-                    <Image src={imageBlog1} alt="" className="img-fluid" />
-                  </div>
-                  <h4>
-                    <a href="">Dolorum optio tempore voluptas dignissimos</a>
-                  </h4>
-                  <p>2 Jam yang lalu</p>
-                </article>
-              </div>
-              <div
-                className="col-xl-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <article
-                  className=""
-                  style={{
-                    boxShadow:
-                      "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: isMobile ? 20 : 30,
-                  }}
-                >
-                  <div className="post-img">
-                    <Image src={imageBlog1} alt="" className="img-fluid" />
-                  </div>
-                  <h4>
-                    <a href="">Dolorum optio tempore voluptas dignissimos</a>
-                  </h4>
-                  <p>2 Jam yang lalu</p>
-                </article>
-              </div>
+              {news.length > 0 ? (
+                news
+                  .slice(-3)
+                  .reverse()
+                  .map(
+                    (
+                      news,
+                      index // Mengambil 3 artikel terakhir dan membalik urutannya
+                    ) => (
+                      <div key={news.id} className="col-xl-4 col-md-6">
+                        <article
+                          className=""
+                          data-aos="fade-up"
+                          data-aos-delay="500"
+                          style={{
+                            boxShadow:
+                              "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: isMobile ? 20 : 30,
+                          }}
+                        >
+                          <div className="">
+                            <img
+                              src={`http://localhost:5000/uploads/${news.gambar}`}
+                              alt={news.judul}
+                              className="card-img-top"
+                              style={{ height: "200px", objectFit: "cover" }}
+                            />
+                          </div>
+                          <br />
+                          <Link href={`/articles/${generateSlug(news.judul)}`}>
+                            <h4>{news.judul}</h4>
+                          </Link>
+                          <p>{news.tanggal}</p>
+                        </article>
+                      </div>
+                    )
+                  )
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    Tidak ditemukan pengumuman.
+                  </td>
+                </tr>
+              )}
             </div>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link href={"/Landing/News"} style={{alignItems: "center"}}>
+              <button
+                className="text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+                style={{
+                  marginTop: 30,
+                  marginBottom: 10,
+                  padding: 5,
+                  fontSize: 15,
+                }}
+              > <h5>Pengumuman Lainnya</h5>
+                
+              </button>
+            </Link>
+            </div>
+            
           </div>
+          
         </article>
       </div>
     </div>
