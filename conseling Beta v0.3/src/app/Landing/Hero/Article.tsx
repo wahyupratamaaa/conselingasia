@@ -49,7 +49,7 @@ export default function Article() {
     }
   };
 
-  
+
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
     fetchArticles();
@@ -113,6 +113,8 @@ export default function Article() {
             <Link href={"/Landing/Article"}>
             <button
               className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+        
+              onClick = {() => console.log('errror')}
               style={{
                 margin: 5,
                 marginBottom: 10,

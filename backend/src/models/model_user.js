@@ -11,9 +11,9 @@ const User = db.define(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       validate: {
-        notEmpty: true,
+        notEmpty: false,
       },
     },
     username: {

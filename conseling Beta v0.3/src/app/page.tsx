@@ -1,12 +1,19 @@
-// import Image from "next/image";
-// import Login from "./users/login/page";
-import Landing from "./Landing/page";
+// src/app/components/Layout/AppLayout.tsx
+import { ReactNode } from "react";
+import { PengumumanProvider } from "../app/components/Layout/PengumumanContext";
+import Landing from "../app/Landing/page" ;
 
-export default function Home() {
-  return (
-    <div className="flex items-center justify-center">
-      {/* <Login /> */}
-      <Landing/>
-    </div>
-  );
+interface AppLayoutProps {
+  children: ReactNode;
 }
+
+const AppLayout = ({ children }: AppLayoutProps) => {
+  return (
+    <PengumumanProvider>
+      {children}
+      <Landing />
+    </PengumumanProvider>
+  );
+};
+
+export default AppLayout;
