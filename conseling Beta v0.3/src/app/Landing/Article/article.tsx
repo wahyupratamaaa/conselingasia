@@ -73,7 +73,7 @@ export default function Article() {
             
             <div key={article.id} className="col">
                 <div className="card h-100">
-                    <img src={`http://localhost:5000/uploads/${article.gambar}`} alt="..." className="card-img-top" />
+                    <img src={`http://localhost:5000/uploads/${article.gambar}`} alt="..." className="card-img-top" style={{ height: "200px", objectFit: "cover" }} />
                     <div className="card-body">
                         <Link href={`/articles/${generateSlug(article.judul)}`}><h5 className="card-title">{article.judul}</h5></Link>
                         <div className="card-text"><p className="truncate max-w-xs">{article.isi}</p></div>
@@ -85,68 +85,6 @@ export default function Article() {
             </div>
             
         ))}
-        </div>
-        <div className=" row row-cols-1 row-cols-md-4 g-4" data-aos="fade-up">
-            <div className="col">
-                <div className="card h-100">
-                    <Image src={imageBlog1} alt="..." className="card-img-top"/>
-                    <div className="card-body">
-                        <h5 className="card-title">Ini Judul</h5>
-                        <p className="card-text"> ini deskripsi</p>
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">terakhir diupdate</small>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card h-100">
-                    <Image src={imageBlog1} alt="..." className="card-img-top"/>
-                    <div className="card-body">
-                        <h5 className="card-title">Ini Judul</h5>
-                        <p className="card-text"> ini deskripsi</p>
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">terakhir diupdate</small>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card h-100">
-                    <Image src={imageBlog1} alt="..." className="card-img-top"/>
-                    <div className="card-body">
-                        <h5 className="card-title">Ini Judul</h5>
-                        <div className="card-text"><p className="truncate max-w-xs">{datapanjang}</p></div>
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">terakhir diupdate</small>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card h-100">
-                    <Image src={imageBlog1} alt="..." className="card-img-top"/>
-                    <div className="card-body">
-                        <h5 className="card-title">Ini Judul</h5>
-                        <div className="card-text"><p className="truncate max-w-xs">{datapanjang}</p></div>
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">terakhir diupdate</small>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card h-100">
-                    <Image src={imageBlog1} alt="..." className="card-img-top"/>
-                    <div className="card-body">
-                        <h5 className="card-title">Ini Judul</h5>
-                        <div className="card-text"><p className="truncate max-w-xs">{datapanjang}</p></div>
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">terakhir diupdate</small>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
   );
