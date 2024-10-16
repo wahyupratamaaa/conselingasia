@@ -1,8 +1,9 @@
+
 export default function Home() {
   return (
-    <aside className="lg:w-64 w-full bg-gray-800 text-white flex-shrink-0 ">
+    <aside className="lg:w-64 w-full bg-gray-800 text-white flex-shrink-0 sticky top-0">
       <div className="p-6">
-        <h2 className="text-xl font-semibold">Konseling</h2>
+        <h2 className="text-2xl font-semibold">Konseling</h2>
       </div>
       <nav className="px-4">
         <a
@@ -38,21 +39,11 @@ export default function Home() {
           </li>
           <li>
             <a
-              href="/User/Password"
+              href="/Dashboard/Daftar"
               className="block py-2 px-3 rounded hover:bg-gray-700"
             >
-              Edit Pass User
+              Tambah User
             </a>
-            
-          </li>
-          <li>
-            <a
-              href="/User/Register"
-              className="block py-2 px-3 rounded hover:bg-gray-700"
-            >
-              Register
-            </a>
-            
           </li>
         </ul>
       </nav>

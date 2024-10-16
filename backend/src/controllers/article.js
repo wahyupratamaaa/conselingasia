@@ -122,4 +122,51 @@ router.get("/:id", async (req, res) => {
   }
   res.status(200).json(response);
 });
+// PUT (EDIT) ARTICLE
+router.put("/:id", upload.single("gambar"), async (req, res) => {
+  const id = req.params.id;
+  const { judul, tanggal, isi } = req.body;
+  const gambar = req.file ? req.file.filename : null;
+
+  try {
+    const article = await Article.findOne({ where: { id } });
+
+    if (article) {
+      // Jika ada file gambar baru, hapus gambar lama
+      if (gambar && article.gambar) {
+        const oldFilePath = path.join(__dirname, "../uploads", article.gambar);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlink(oldFilePath, (err) => {
+            if (err) {
+              console.error("Gagal menghapus file gambar lama:", err);
+            } else {
+              console.log("File gambar lama berhasil dihapus:", oldFilePath);
+            }
+          });
+        }
+      }
+
+      // Update artikel
+      const updatedArticle = await article.update({
+        judul,
+        tanggal,
+        gambar: gambar || article.gambar, // Tetap gunakan gambar lama jika tidak ada gambar baru
+        isi,
+      });
+
+      response.status = "success";
+      response.message = "Artikel berhasil diperbarui";
+      response.data = updatedArticle;
+      res.status(200).json(response);
+    } else {
+      response.message = "Artikel tidak ditemukan";
+      res.status(404).json(response);
+    }
+  } catch (error) {
+    console.warn(error);
+    response.message = "Terjadi kesalahan saat mengedit artikel";
+    res.status(500).json(response);
+  }
+});
+
 module.exports = router;
