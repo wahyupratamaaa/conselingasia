@@ -21,6 +21,10 @@ const Pengumuman = db.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "table_pengumuman",

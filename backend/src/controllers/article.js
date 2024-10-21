@@ -6,8 +6,6 @@ const path = require("path");
 const fs = require("fs");
 const slugify = require("slugify");
 
-
-
 const response = {
   status: "failed",
   message: "aksi gagal dilakukan",
@@ -156,6 +154,31 @@ router.put("/:id", upload.single("gambar"), async (req, res) => {
 
       response.status = "success";
       response.message = "Artikel berhasil diperbarui";
+      response.data = updatedArticle;
+      res.status(200).json(response);
+    } else {
+      response.message = "Artikel tidak ditemukan";
+      res.status(404).json(response);
+    }
+  } catch (error) {
+    console.warn(error);
+    response.message = "Terjadi kesalahan saat mengedit artikel";
+    res.status(500).json(response);
+  }
+});
+
+router.put("/published/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const article = await Article.findOne({ where: { id } });
+    if (article) {
+      const updatedArticle = await article.update({
+        status: article.status == 0 ? 1 : 0,
+      });
+
+      response.status = "success";
+      response.message = "Artikel terpublish";
       response.data = updatedArticle;
       res.status(200).json(response);
     } else {

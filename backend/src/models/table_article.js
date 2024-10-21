@@ -25,6 +25,10 @@ const Article = db.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "table_article",

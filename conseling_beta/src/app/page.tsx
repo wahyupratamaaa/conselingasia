@@ -1,7 +1,7 @@
 // src/app/components/Layout/AppLayout.tsx
 import { ReactNode } from "react";
-import { PengumumanProvider } from "../app/components/Layout/PengumumanContext";
-import Landing from "../app/Landing/page" ;
+import { PengumumanProvider } from "./components/Layout/PengumumanContext";
+import Landing from "./Landing/page";
 
 interface AppLayoutProps {
   children: ReactNode;

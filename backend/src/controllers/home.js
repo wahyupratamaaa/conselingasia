@@ -15,14 +15,10 @@ router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Cari user berdasarkan username
     const user = await User.findOne({ where: { username } });
-
     if (!user) {
       return res.status(401).json({ message: "Username tidak ditemukan" });
     }
-
-    // Verifikasi password
     const isPasswordValid = password_verify(password, user.password);
 
     if (!isPasswordValid) {
@@ -30,9 +26,13 @@ router.post("/login", async (req, res) => {
     }
 
     // Jika login berhasil, Anda bisa mengembalikan data user atau token JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.SECRET_KEY, {
-      expiresIn: '1h', // Contoh jika menggunakan token JWT
-    });
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "1h", // Contoh jika menggunakan token JWT
+      }
+    );
 
     return res.status(200).json({
       status: "success",
@@ -51,12 +51,23 @@ router.post("/login", async (req, res) => {
 });
 // post create
 router.post("/", async (req, res) => {
-  const {name, username, password } = req.body;
+  const { name, username, password } = req.body;
 
   try {
-    // Hash password sebelum disimpan ke database
+    // Step 1: Cek apakah username sudah ada di database
+    const existingUser = await User.findOne({ where: { username } });
+
+    if (existingUser) {
+      return res.status(400).json({
+        status: "error",
+        message: "Username sudah digunakan, pilih username lain.",
+      });
+    }
+
+    // Step 2: Hash password sebelum disimpan ke database
     const hashedPassword = password_hash(password);
 
+    // Step 3: Buat user baru
     const user = await User.create({
       name,
       username,
@@ -78,7 +89,38 @@ router.post("/", async (req, res) => {
       error: error.message,
     });
   }
-})
+});
+
+// router.post("/", async (req, res) => {
+//   const { name, username, password } = req.body;
+
+//   try {
+//     // Hash password sebelum disimpan ke database
+//     const hashedPassword = password_hash(password);
+
+//     const user = await User.create({
+//       name,
+//       username,
+//       password: hashedPassword,
+//     });
+
+//     if (user) {
+//       return res.status(201).json({
+//         status: "success",
+//         message: "User berhasil ditambahkan",
+//         data: { id: user.id, username: user.username },
+//       });
+//     }
+//   } catch (error) {
+//     console.warn(error);
+//     return res.status(500).json({
+//       status: "error",
+//       message: "Terjadi kesalahan saat membuat user",
+//       error: error.message,
+//     });
+//   }
+// });
+
 // PUT - Update user by ID
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
@@ -131,7 +173,8 @@ router.get("/", async (req, res) => {
     });
   }
 });
-// DELETE - Delete user by ID
+
+// delete - Delete user by ID
 router.delete("/:id", async (req, res) => {
   const { id } = req.params; // Ambil ID dari URL
 
@@ -159,7 +202,46 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// POST - Create user
+router.post("/", async (req, res) => {
+  const { name, username, password } = req.body;
 
+  try {
+    // Cek apakah username sudah ada di database
+    const existingUser = await User.findOne({ where: { username } });
+
+    if (existingUser) {
+      return res.status(400).json({
+        status: "error",
+        message: "Username sudah digunakan",
+      });
+    }
+
+    // Hash password sebelum disimpan ke database
+    const hashedPassword = password_hash(password);
+
+    const user = await User.create({
+      name,
+      username,
+      password: hashedPassword,
+    });
+
+    if (user) {
+      return res.status(201).json({
+        status: "success",
+        message: "User berhasil ditambahkan",
+        data: { id: user.id, username: user.username },
+      });
+    }
+  } catch (error) {
+    console.warn(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Terjadi kesalahan saat membuat user",
+      error: error.message,
+    });
+  }
+});
 
 module.exports = router;
 // const express = require("express");
@@ -237,7 +319,6 @@ module.exports = router;
 //     return res.status(500).json({ message: "Terjadi kesalahan server" });
 //   }
 // });
-
 
 // // GET - Fetch all users
 // router.get("/", async (req, res) => {
