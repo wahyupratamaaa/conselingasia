@@ -110,21 +110,6 @@ export default function News() {
             data-aos="fade-right"
             data-aos-duration="1000"
           >
-            {/* <Link href={"/Landing/Article"}>
-              <button
-                className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
-                style={{
-                  margin: 5,
-                  marginBottom: 10,
-                  padding: 5,
-                  bottom: 2,
-                  left: 5,
-                  fontSize: 15,
-                }}
-              >
-                Baca Pengumuman Lainnya
-              </button>
-            </Link> */}
           </div>
 
           <div className="container">
@@ -136,7 +121,6 @@ export default function News() {
                   .map(
                     (
                       news,
-                      index // Mengambil 3 artikel terakhir dan membalik urutannya
                     ) => (
                       <div key={news.id} className="col-xl-4 col-md-6">
                         <article

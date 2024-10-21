@@ -15,12 +15,12 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className="flex w-full items-center fixed-top top-0 left-0 bg-white"
+      className="px-16 flex w-full items-center fixed-top top-0 left-0 bg-white "
       style={{ borderRadius: 10 }}
     >
       <div className="flex w-full items-center justify-start">
         <Image
-          className="mr-3"
+          
           style={{ width: 120, height: 45, margin: 15 }}
           src={Logo}
           alt="logo"
