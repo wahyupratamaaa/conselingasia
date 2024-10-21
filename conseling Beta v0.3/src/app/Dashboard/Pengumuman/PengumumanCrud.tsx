@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -22,8 +21,10 @@ interface News {
 // Fungsi deletePengumuman untuk menghapus artikel
 const deleteNews = async (id: string): Promise<void> => {
   // Menampilkan alert konfirmasi dan menghentikan proses jika pengguna memilih "Cancel"
-  const isConfirmed = window.confirm("Are you sure you want to delete this news?");
-  
+  const isConfirmed = window.confirm(
+    "Are you sure you want to delete this news?"
+  );
+
   if (!isConfirmed) {
     console.log("Pengumuman deletion cancelled by user.");
     window.location.reload();
@@ -32,7 +33,7 @@ const deleteNews = async (id: string): Promise<void> => {
 
   try {
     const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -40,7 +41,7 @@ const deleteNews = async (id: string): Promise<void> => {
     }
 
     console.log(`Pengumuman with id: ${id} deleted successfully`);
-  } catch (error) { 
+  } catch (error) {
     // Pastikan error memiliki properti 'message' jika bertipe 'Error'
     if (error instanceof Error) {
       console.error("Error deleting article:", error.message);
@@ -69,10 +70,11 @@ export default function NewsCrud() {
       }
 
       const result = await response.json();
-      console.log("Data dari API:", result);
 
       // Ambil data artikel dari properti "data"
-      setNews(result.data);
+      setNews(
+        result.data.sort((a: { id: number }, b: { id: number }) => b.id - a.id)
+      );
     } catch (error) {
       console.error("Error fetching articles:", error);
     } finally {
@@ -82,28 +84,30 @@ export default function NewsCrud() {
 
   const handleEdit = (news: News) => {
     setEditingNews(news);
-    setModalOpen(true)
-
-  }
+    setModalOpen(true);
+  };
   // Fungsi untuk menghapus artikel
   const handleDelete = async (id: string) => {
     try {
       await deleteNews(id);
-      setNews(news.filter(news => news.id !== id)); // Menghapus artikel dari state
+      setNews(news.filter((news) => news.id !== id)); // Menghapus artikel dari state
     } catch (error) {
       console.error("Error deleting article:", error);
     }
   };
 
   const handleVisible = async (id: string) => {
-    setNews(news.map(news => (news.id === id ? { ...news, isVisible: !news.isVisible}: news
-    )))
-  await Swal.fire ({
-    icon: 'success',
-    title: 'Visibility Toggled',
-    text: 'Article visibility has been updated.',
-  })
-}
+    setNews(
+      news.map((news) =>
+        news.id === id ? { ...news, isVisible: !news.isVisible } : news
+      )
+    );
+    await Swal.fire({
+      icon: "success",
+      title: "Visibility Toggled",
+      text: "Article visibility has been updated.",
+    });
+  };
 
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
@@ -151,40 +155,63 @@ export default function NewsCrud() {
             </tr>
           </thead>
           <tbody>
-  {news.length > 0 ? (
-    news.map((news, index) => (
-      <tr key={news.id} className={`text-center  ${news.isVisible ? 'opacity-50' : ''}`}>
-        <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
-        <td className="px-4 py-2 border border-gray-300">{news.judul}</td>
-        <td className="px-4 py-2 border border-gray-300">{news.tanggal}</td>
-        <td className="px-4 py-2 border border-gray-300">
-          <img
-            src={`http://localhost:5000/uploads/${news.gambar}`}
-            alt={news.judul}
-            className="h-20 mx-auto"
-          />
-        </td>
-        <td className="px-4 py-2 border border-gray-300">
-          <div className="flex justify-center items-center space-x-3">
-            <BiSolidEdit onClick= {() => handleEdit(news)} className="cursor-pointer" />
-            <AiTwotoneDelete onClick={() => handleDelete(news.id)} className="cursor-pointer" />
-              {news.isVisible ? (
-                <PiEye onClick={() => handleVisible(news.id)} className="cursor-pointer" />
-              ) : (
-               <PiEyeSlash onClick={() => handleVisible(news.id)}className="cursor-pointer" />
-              )}
-          </div>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={5} className="text-center py-4">
-        No articles found.
-      </td>
-    </tr>
-  )}
-  </tbody>
+            {news.length > 0 ? (
+              news.map((news, index) => (
+                <tr
+                  key={news.id}
+                  className={`text-center  ${
+                    news.isVisible ? "opacity-50" : ""
+                  }`}
+                >
+                  <td className="px-4 py-2 border border-gray-300">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {news.judul}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {news.tanggal}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <img
+                      src={`http://localhost:5000/uploads/${news.gambar}`}
+                      alt={news.judul}
+                      className="h-20 mx-auto"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <div className="flex justify-center items-center space-x-3">
+                      <BiSolidEdit
+                        onClick={() => handleEdit(news)}
+                        className="cursor-pointer"
+                      />
+                      <AiTwotoneDelete
+                        onClick={() => handleDelete(news.id)}
+                        className="cursor-pointer"
+                      />
+                      {news.isVisible ? (
+                        <PiEye
+                          onClick={() => handleVisible(news.id)}
+                          className="cursor-pointer"
+                        />
+                      ) : (
+                        <PiEyeSlash
+                          onClick={() => handleVisible(news.id)}
+                          className="cursor-pointer"
+                        />
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center py-4">
+                  No articles found.
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </div>
       {/* Pagination Section */}
@@ -198,7 +225,14 @@ export default function NewsCrud() {
       </div>
 
       {/* Modal Component */}
-      {isModalOpen && <ModalFadeNews toggleModal={toggleModal} editData={editingNews || { id: "", judul: "", tanggal: "", gambar: "" }} />}
+      {isModalOpen && (
+        <ModalFadeNews
+          toggleModal={toggleModal}
+          editData={
+            editingNews || { id: "", judul: "", tanggal: "", gambar: "" }
+          }
+        />
+      )}
     </div>
   );
 }

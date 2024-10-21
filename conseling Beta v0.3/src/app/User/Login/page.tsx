@@ -1,5 +1,3 @@
-
-
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,23 +30,23 @@ export default function Home() {
       });
       return;
     }
-
     try {
-      const res = await fetch("http://localhost:5000/api/home/login", { // periksa endpoint login
+      const res = await fetch("http://localhost:5000/api/home/login", {
+        // periksa endpoint login
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       // Cek apakah respons berhasil
       if (!res.ok) {
-        throw new Error("access salah");
+        throw new Error("Username atau Password salah, silakan coba lagi.");
       }
-  
+
       const data = await res.json();
-  
+
       if (data.status === "success") {
         console.log("response data:", data.status);
         router.push("/Dashboard");

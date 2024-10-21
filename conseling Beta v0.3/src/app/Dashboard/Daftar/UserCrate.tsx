@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, use } from "react";
 import ShowEye from "@/app/components/Layout/showEye";
 import TextDashboard from "@/app/components/Layout/textDashboard";
-import { RiEditFill } from "react-icons/ri";
+import { FaUserEdit } from "react-icons/fa";
+
 import { MdAutoDelete } from "react-icons/md";
 import Swal from "sweetalert2"; // Pastikan SweetAlert2 diimport
 
@@ -19,18 +21,21 @@ const UserCreate: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Re-Type Password State
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   useEffect(() => {
     fetchUsers();
   }, []);
-
 
   const fetchUsers = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/home");
       const data = await response.json();
       if (data.status === "success") {
-        const sortedUsers = data.data.sort((a: User, b: User) => b.id - a.id); 
+        const sortedUsers = data.data.sort((a: User, b: User) => b.id - a.id);
         setUsers(sortedUsers);
       } else {
         console.error("Error fetching users:", data.message);
@@ -40,7 +45,9 @@ const UserCreate: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
 
     if (!username || !password) return;
@@ -48,29 +55,39 @@ const UserCreate: React.FC = () => {
     const userData = {
       username,
       password,
-      name, // Pastikan name dikirimkan jika diperlukan
+      name,
     };
 
     try {
       const response = editUserId
         ? await fetch(`http://localhost:5000/api/home/${editUserId}`, {
-            method: 'PUT',
+            method: "PUT",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password, name }), // Kirim name ke backend
+            body: JSON.stringify({ username, password, name }),
           })
         : await fetch("http://localhost:5000/api/home", {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password, name }), // Kirim name ke backend
+            body: JSON.stringify({ username, password, name }),
           });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error:", errorData.message);
+        // Menampilkan SweetAlert jika username sudah digunakan
+        if (data.message === "Username sudah digunakan, pilih username lain.") {
+          Swal.fire({
+            title: "Error",
+            text: "Username sudah digunakan, pilih username lain.",
+            icon: "error",
+          });
+        } else {
+          console.error("Error:", data.message);
+        }
         return;
       }
 
@@ -81,24 +98,26 @@ const UserCreate: React.FC = () => {
           )
         );
         Swal.fire({
-            title: "Updated!",
-            text: "Data suksess diubah!",
-            icon: "success",
-          });
+          title: "Updated!",
+          text: "Data suksess diubah!",
+          icon: "success",
+        });
       } else {
         const newUser = { id: Math.random(), name, username };
         setUsers((prevUsers) => [newUser, ...prevUsers]);
         Swal.fire({
-            title: "Berhasil!",
-            text: "Data pengguna berhasil didaftarkan!",
-            icon: "success",
-          });
+          title: "Berhasil!",
+          text: "Data pengguna berhasil didaftarkan!",
+          icon: "success",
+        });
       }
 
       setName("");
       setUsername("");
       setPassword("");
+      setConfirmPassword("");
       setEditUserId(null);
+      fetchUsers();
     } catch (error) {
       console.error("Error during fetch:", error);
     }
@@ -118,7 +137,7 @@ const UserCreate: React.FC = () => {
 
       if (result.isConfirmed) {
         await fetch(`http://localhost:5000/api/home/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
 
         Swal.fire({
@@ -141,7 +160,7 @@ const UserCreate: React.FC = () => {
   };
 
   const handleEdit = (user: User) => {
-    setName(user.name); // Pastikan setName memuat nilai yang benar
+    setName(user.name);
     setUsername(user.username);
     setEditUserId(user.id);
   };
@@ -149,21 +168,23 @@ const UserCreate: React.FC = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   return (
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
       <TextDashboard />
       <h1 className="text-3xl font-bold mt-10">Registrasi Pengguna</h1>
-      <div className="flex-1 flex justify-start mt-10">
+      <div className="mt-10">
         <div className="text-1xl font-sm flex flex-col mt-4 w-full max-w-md space-x-2">
-          <form onSubmit={handleSubmit} 
-          >
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               className="mr-2 h-10 mb-4 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 "
               placeholder="Name"
               value={name}
-              onChange={(e) => setName(e.target.value)} // Pastikan setName bekerja dengan benar
+              onChange={(e) => setName(e.target.value)}
               required
             />
             <input
@@ -175,6 +196,7 @@ const UserCreate: React.FC = () => {
               required
             />
             <div className="relative flex flex-col mb-4">
+              {/* Password Input */}
               <input
                 type={showPassword ? "text" : "password"}
                 className="h-10 px-3 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
@@ -187,8 +209,26 @@ const UserCreate: React.FC = () => {
                 togglePasswordVisibility={togglePasswordVisibility}
                 showPassword={showPassword}
               />
+
+              {/* Re-type Password Input */}
+              <input
+                type={"password"}
+                className="h-10 px-3 mt-2 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                placeholder="Re-type Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
             </div>
-            <div className="flex justify-end mt-4">
+
+            <div className=" mt-4 flex flex-row">
+              <div className="flex-1 justify-between">
+                {confirmPassword && confirmPassword !== password && (
+                  <p className="text-red-500 text-sm w1/2">
+                    Password tidak sesuai
+                  </p>
+                )}
+              </div>
               <button
                 type="submit"
                 className="flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md border border-blue-700"
@@ -202,55 +242,56 @@ const UserCreate: React.FC = () => {
 
       {/* Tabel Pengguna */}
       <h2 className="text-2xl font-bold mt-4">Daftar Pengguna</h2>
-      <div className="relative mt-2 max-h-[400px] overflow-y-auto">
-        <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-lg">
+      <div className="relative mt-2 max-h-[1000px] overflow-y-auto">
+        <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-md">
           <thead className="bg-gray-200 sticky top-0 z-10 border-b border-gray-300">
             <tr>
-              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">No</th>
-              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">Nama</th>
-              <th className="py-3 px-4 border-r border-gray-300 text-sm font-semibold text-gray-600 text-center">Username</th>
-              <th className="py-3 px-4 text-sm font-semibold text-gray-600 text-center">Aksi</th>
+              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">
+                No
+              </th>
+              <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">
+                Nama
+              </th>
+              <th className="py-3 px-4 border-r border-gray-300 text-sm font-semibold text-gray-600 text-center">
+                Username
+              </th>
+              <th className="py-3 px-4 text-sm font-semibold text-gray-600 text-center">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
-              // Menampilkan 10 baris kosong jika tidak ada data
-              Array.from({ length: 10 }).map((_, index) => (
-                <tr key={index} className="hover:bg-gray-100 transition-colors">
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">{index + 1}</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">-</td>
-                </tr>
-              ))
-            ) : (
-              // Menampilkan data pengguna dan menambahkan baris kosong hingga jumlah baris = 10
-              users.concat(Array.from({ length: 10 - users.length })).map((user, index) => (
-                <tr key={user?.id || index} className="hover:bg-gray-100 transition-colors">
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">{index + 1}</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">{user?.name || '-'}</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center">{user?.username || '-'}</td>
-                  <td className="py-2 px-4 border-t border-gray-300 text-center flex justify-center space-x-2">
-                    <RiEditFill
-                      onClick={() => handleEdit(user)}
-                      className="text-blue-500 cursor-pointer hover:text-blue-600"
-                      title="Edit"
-                    />
-                    <MdAutoDelete
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-500 cursor-pointer hover:text-red-600"
-                      title="Delete"
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
+            {users.map((user, index) => (
+              <tr key={user.id} className="border-b border-gray-300">
+                <td className="py-3 px-4 border-r border-gray-300 text-sm text-gray-700 text-center">
+                  {index + 1}
+                </td>
+                <td className="py-3 px-4 border-r border-gray-300 text-sm text-gray-700 text-center">
+                  {user.name}
+                </td>
+                <td className="py-3 px-4 border-r border-gray-300 text-sm text-gray-700 text-center">
+                  {user.username}
+                </td>
+                <td className="py-3 px-4 text-sm text-gray-700 text-center">
+                  <button
+                    className="text-blue-500 hover:text-blue-600 mx-2"
+                    onClick={() => handleEdit(user)}
+                  >
+                    <FaUserEdit />
+                  </button>
+                  <button
+                    className="text-red-500 hover:text-red-600 mx-2"
+                    onClick={() => handleDelete(user.id)}
+                  >
+                    <MdAutoDelete />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <div className="mt-4">
-            <div className="text-bold text-gray-500">
-                Data table {users.length}
-            </div>
+        <div className="flex justify-between mt-2">
+          <span>Terdapat {users.length} Data </span>
         </div>
       </div>
     </div>

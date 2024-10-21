@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 import TabConseling from "../components/Layout/pageConseling";
 import { useRouter } from "next/navigation";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -25,7 +24,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     const result = await Swal.fire({
-      title: "Apakah Anda yakin ingin Logout?",
+      title: "Anda yakin ingin Logout?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -82,7 +81,7 @@ export default function Dashboard() {
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
               onClick={() => handleNavigation("/Dashboard/Article")}
             >
-              CRUD &rarr;
+              Tambah &rarr;
             </button>
           </div>
 
@@ -94,7 +93,7 @@ export default function Dashboard() {
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
               onClick={() => handleNavigation("/Dashboard/Pengumuman")}
             >
-              CRUD &rarr;
+              Tambah &rarr;
             </button>
           </div>
 
@@ -106,7 +105,7 @@ export default function Dashboard() {
               className="mt-4 bg-black text-white py-2 px-4 rounded-lg"
               onClick={() => handleNavigation("/Dashboard/Daftar")}
             >
-              CRUD &rarr;
+              Tambah &rarr;
             </button>
           </div>
         </div>

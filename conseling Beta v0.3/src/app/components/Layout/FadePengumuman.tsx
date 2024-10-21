@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
@@ -17,7 +17,6 @@ export default function ModalFadeNews({
   const [editId, setEditId] = useState<string | null>(editData?.id || null); // Set ID untuk edit
 
   useEffect(() => {
-    console.log(editData);
     if (editData) {
       setJudul(editData.judul);
       setTanggal(editData.tanggal);
@@ -46,22 +45,31 @@ export default function ModalFadeNews({
       }
 
       // Mengirim data ke API
-      const method = editData ? "PUT" : "POST"; // Gunakan PUT jika sedang edit
-      const url = editData ? `http://localhost:5000/api/pengumuman/${editId}` : "http://localhost:5000/api/pengumuman";
+      const method = editData?.id != "" ? "PUT" : "POST"; // Gunakan PUT jika sedang edit
+      const url =
+        editData?.id != ""
+          ? `http://localhost:5000/api/pengumuman/${editId}`
+          : "http://localhost:5000/api/pengumuman";
       const res = await fetch(url, {
         method,
         body: formData,
       });
 
       if (!res.ok) {
-        throw new Error(editData ? "Gagal mengedit pengumuman" : "Gagal menambahkan pengumuman");
+        throw new Error(
+          editData
+            ? "Gagal mengedit pengumuman"
+            : "Gagal menambahkan pengumuman"
+        );
       }
 
       const data = await res.json(); // Ambil data dari respons
 
       if (data.status !== "failed") {
         Swal.fire({
-          title: editData ? "Pengumuman Berhasil Diperbarui!" : "Pengumuman Berhasil Ditambahkan!",
+          title: editData
+            ? "Pengumuman Berhasil Diperbarui!"
+            : "Pengumuman Berhasil Ditambahkan!",
           icon: "success",
         });
         toggleModal(); // Tutup modal setelah sukses
