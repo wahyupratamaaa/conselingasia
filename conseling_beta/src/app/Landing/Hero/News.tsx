@@ -158,7 +158,7 @@ export default function News() {
                             />
                           </div>
                           <br />
-                          <Link href={`/articles/${generateSlug(news.judul)}`}>
+                          <Link href={`/newss/${(news.id)}`}>
                             <h4>{news.judul}</h4>
                           </Link>
                           <p>{news.tanggal}</p>

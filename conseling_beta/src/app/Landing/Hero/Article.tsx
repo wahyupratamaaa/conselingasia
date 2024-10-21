@@ -19,9 +19,9 @@ export default function Article() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const generateSlug = (judul: string) => {
-    return judul.toLowerCase().replace(/\s+/g, "-");
-  };
+  // const generateSlug = (judul: string) => {
+  //   return judul.toLowerCase().replace(/\s+/g, "-");
+  // };
 
   const fetchArticles = async () => {
     try {
@@ -36,12 +36,12 @@ export default function Article() {
       console.log("Data dari API:", result);
 
       // Generate slug untuk setiap artikel dan simpan di state
-      const articlesWithSlug = result.data.map((article: Article) => ({
-        ...article,
-        slug: generateSlug(article.judul), // Tambahkan slug yang di-generate dari judul
-      }));
+      // const articlesWithSlug = result.data.map((article: Article) => ({
+      //   ...article,
+      //   slug: generateSlug(article.id), // Tambahkan slug yang di-generate dari judul
+      // }));
 
-      setArticles(articlesWithSlug);
+      setArticles(result.data);
     } catch (error) {
       console.error("Error fetching articles:", error);
     } finally {
@@ -56,7 +56,7 @@ export default function Article() {
   }, []);
 
   if (loading) {
-    return <div>Loading data...</div>;
+    return <div>Loading data artikel...</div>;
   }
 
   return (
@@ -159,7 +159,7 @@ export default function Article() {
                           </div>
                           <br />
                           <Link
-                            href={`/articles/${generateSlug(article.judul)}`}
+                            href={`/articles/${(article.id)}`}
                           >
                             <h4>{article.judul}</h4>
                           </Link>

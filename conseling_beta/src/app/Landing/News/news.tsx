@@ -74,7 +74,7 @@ export default function Article() {
                 <div className="card h-100">
                     <img src={`http://localhost:5000/uploads/${news.gambar}`} alt="..." className="card-img-top" style={{ height: "200px", objectFit: "cover" }} />
                     <div className="card-body">
-                        <Link href={`/newss/${generateSlug(news.judul)}`}><h5 className="card-title">{news.judul}</h5></Link>
+                        <Link href={`/newss/${(news.id)}`}><h5 className="card-title">{news.judul}</h5></Link>
                         
                     </div>
                     <div className="card-footer">
