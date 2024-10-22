@@ -4,9 +4,9 @@ import User from "./UserCrate";
 
 export default function UserNew() {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100 overflow-hidden">
       <Layout />
-        <User />
+      <User />
     </div>
   );
 }

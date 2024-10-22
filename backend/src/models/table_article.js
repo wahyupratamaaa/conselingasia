@@ -28,6 +28,7 @@ const Article = db.define(
     status: {
       type: DataTypes.STRING,
       allowNull: false,
+      defaultValue: "0",
     },
   },
   {

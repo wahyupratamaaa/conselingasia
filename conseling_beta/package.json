@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-
     "dev": "next dev",
     "build": "rmdir /s /q .next && mkdir .next && next build",
     "start": "next start",
@@ -15,6 +14,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "ckeditor4-react": "^5.2.0",
     "next": "14.2.8",
     "particles.js": "^2.0.0",
     "react": "^18",

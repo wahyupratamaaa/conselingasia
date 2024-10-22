@@ -25,6 +25,10 @@ const Pengumuman = db.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: "0",
+    },
   },
   {
     tableName: "table_pengumuman",
