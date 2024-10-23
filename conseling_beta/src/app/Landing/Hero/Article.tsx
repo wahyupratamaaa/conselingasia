@@ -11,6 +11,7 @@ interface Article {
   judul: string;
   tanggal: string;
   gambar: string;
+  status: string;
   isi: string;
 }
 
@@ -48,7 +49,6 @@ export default function Article() {
       setLoading(false);
     }
   };
-
 
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
@@ -111,27 +111,28 @@ export default function Article() {
           >
             <h3 className="text-customBlueText mx-2">Terbaru</h3>
             <Link href={"/Landing/Article"}>
-            <button
-              className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
-        
-              onClick = {() => console.log('errror')}
-              style={{
-                margin: 5,
-                marginBottom: 10,
-                padding: 5,
-                bottom: 2,
-                left: 5,
-                fontSize: 15,
-              }}
-            >
-              Baca Lainnya
-            </button></Link>
+              <button
+                className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
+                onClick={() => console.log("errror")}
+                style={{
+                  margin: 5,
+                  marginBottom: 10,
+                  padding: 5,
+                  bottom: 2,
+                  left: 5,
+                  fontSize: 15,
+                }}
+              >
+                Baca Lainnya
+              </button>
+            </Link>
           </div>
 
           <div className="container">
             <div className="row justify-content-start">
               {articles.length > 0 ? (
                 articles
+                  .filter((item) => item.status == "1")
                   .slice(-3)
                   .reverse()
                   .map(
@@ -158,9 +159,7 @@ export default function Article() {
                             />
                           </div>
                           <br />
-                          <Link
-                            href={`/articles/${(article.id)}`}
-                          >
+                          <Link href={`/articles/${article.id}`}>
                             <h4>{article.judul}</h4>
                           </Link>
                           <p>{article.tanggal}</p>

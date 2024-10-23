@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { PiEyeSlash, PiEye } from "react-icons/pi";
 import Swal from "sweetalert2";
+import Loader from "../../components/Layout/loader";
 
 // Definisikan interface untuk artikel
 interface News {
@@ -16,31 +16,41 @@ interface News {
   judul: string;
   tanggal: string;
   gambar: string;
+  status: string;
   isVisible: boolean;
 }
 
 // Fungsi deletePengumuman untuk menghapus artikel
-const deleteNews = async (id: string): Promise<void> => {
+const deleteNews = async (
+  id: string,
+  setNews: React.Dispatch<React.SetStateAction<News[]>>,
+  news: News[]
+): Promise<void> => {
   // Menampilkan alert konfirmasi dan menghentikan proses jika pengguna memilih "Cancel"
-  const isConfirmed = window.confirm("Are you sure you want to delete this news?");
-  
-  if (!isConfirmed) {
-    console.log("Pengumuman deletion cancelled by user.");
-    window.location.reload();
-    return; // Menghentikan eksekusi jika pengguna membatalkan
-  }
+  const result = await Swal.fire({
+    title: "Apakah anda yakin ingin menghapus data?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, delete!",
+  });
+
+  if (!result.isConfirmed) return;
 
   try {
     const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
       throw new Error(`Failed to delete article with id: ${id}`);
     }
 
+    setNews(news.filter((news) => news.id !== id));
+
     console.log(`Pengumuman with id: ${id} deleted successfully`);
-  } catch (error) { 
+  } catch (error) {
     // Pastikan error memiliki properti 'message' jika bertipe 'Error'
     if (error instanceof Error) {
       console.error("Error deleting article:", error.message);
@@ -72,7 +82,11 @@ export default function NewsCrud() {
       console.log("Data dari API:", result);
 
       // Ambil data artikel dari properti "data"
-      setNews(result.data);
+      setNews(
+        result.data.map((news: News) => {
+          return { ...news, isVisible: news.status == "0" ? false : true };
+        })
+      );
     } catch (error) {
       console.error("Error fetching articles:", error);
     } finally {
@@ -82,28 +96,47 @@ export default function NewsCrud() {
 
   const handleEdit = (news: News) => {
     setEditingNews(news);
-    setModalOpen(true)
-
-  }
+    setModalOpen(true);
+  };
   // Fungsi untuk menghapus artikel
   const handleDelete = async (id: string) => {
     try {
-      await deleteNews(id);
-      setNews(news.filter(news => news.id !== id)); // Menghapus artikel dari state
+      await deleteNews(id, setNews, news);
+      // setNews(news.filter((news) => news.id !== id)); // Menghapus artikel dari state
     } catch (error) {
       console.error("Error deleting article:", error);
     }
   };
 
   const handleVisible = async (id: string) => {
-    setNews(news.map(news => (news.id === id ? { ...news, isVisible: !news.isVisible}: news
-    )))
-  await Swal.fire ({
-    icon: 'success',
-    title: 'Visibility Toggled',
-    text: 'Article visibility has been updated.',
-  })
-}
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/pengumuman/pengumuman_published/${id}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const datas = await response.json();
+
+      if (!response.ok)
+        throw new Error(`Failed to toggle visibility: ${response.status}`);
+
+      fetchNews();
+
+      await Swal.fire({
+        icon: "success",
+        title: datas.data.status == "0" ? "Buka" : "Tutup",
+        text: "Article visibility has been updated.",
+      });
+    } catch (error: any) {
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `Gagal mengubah visibilitas artikel. Error: ${error.message}`,
+      });
+    }
+  };
 
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
@@ -120,9 +153,45 @@ export default function NewsCrud() {
     }
   };
 
-  if (loading) {
-    return <div>Loading data...</div>;
-  }
+  // const toggleVisibility = async (id: string, currentStatus: string) => {
+  //   try{
+  //     const response = await fetch(`http://localhost:5000/api/pengumuman/pengumuman_published/${id}`, {
+  //       method: "PUT"
+
+  //   }
+  // )
+
+  // if (!response.ok){
+  //   throw new Error(`HTTP error! status: ${response.status}`)
+
+  //   setLoading(prevPengumuman) =>
+  //     prevPengumuman.map((pengumuman)) =>
+  //       Pengumuman.id === id
+  //   ? {
+  //     ...PengumumanProvider,
+  //     status: currentStatus === "1" ? "0" : "1",
+  //     isVisible: currentStatus === "1" ? false : true,
+  //   }
+  //   :pengumuman
+  // )
+
+  // }
+  // const message =
+  // currentStatus === "1"
+  // ? "Pengumuman telah berhasil diarsipkan."
+  // : "Pengumuman telah berhasil dibuka arsipnya."
+
+  // }
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <div className="text-2xl">
+          {" "}
+          <Loader />
+        </div>
+      </div>
+    );
 
   return (
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
@@ -151,54 +220,79 @@ export default function NewsCrud() {
             </tr>
           </thead>
           <tbody>
-  {news.length > 0 ? (
-    news.map((news, index) => (
-      <tr key={news.id} className={`text-center  ${news.isVisible ? 'opacity-50' : ''}`}>
-        <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
-        <td className="px-4 py-2 border border-gray-300">{news.judul}</td>
-        <td className="px-4 py-2 border border-gray-300">{news.tanggal}</td>
-        <td className="px-4 py-2 border border-gray-300">
-          <img
-            src={`http://localhost:5000/uploads/${news.gambar}`}
-            alt={news.judul}
-            className="h-20 mx-auto"
-          />
-        </td>
-        <td className="px-4 py-2 border border-gray-300">
-          <div className="flex justify-center items-center space-x-3">
-            <BiSolidEdit onClick= {() => handleEdit(news)} className="cursor-pointer" />
-            <AiTwotoneDelete onClick={() => handleDelete(news.id)} className="cursor-pointer" />
-              {news.isVisible ? (
-                <PiEye onClick={() => handleVisible(news.id)} className="cursor-pointer" />
-              ) : (
-               <PiEyeSlash onClick={() => handleVisible(news.id)}className="cursor-pointer" />
-              )}
-          </div>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={5} className="text-center py-4">
-        No articles found.
-      </td>
-    </tr>
-  )}
-  </tbody>
+            {news.length > 0 ? (
+              news.map((news, index) => (
+                <tr
+                  key={news.id}
+                  className={`text-center  ${
+                    news.isVisible ? "opacity-50" : ""
+                  }`}
+                >
+                  <td className="px-4 py-2 border border-gray-300">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {news.judul}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {news.tanggal}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <img
+                      src={`http://localhost:5000/uploads/${news.gambar}`}
+                      alt={news.judul}
+                      className="h-20 w-full object-cover "
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <div className="flex justify-center items-center space-x-3">
+                      <BiSolidEdit
+                        onClick={() => handleEdit(news)}
+                        className="cursor-pointer text-blue-500"
+                      />
+                      <AiTwotoneDelete
+                        onClick={() => handleDelete(news.id)}
+                        className="cursor-pointer text-red-500"
+                      />
+                      {news.isVisible ? (
+                        <PiEye
+                          onClick={() => handleVisible(news.id)}
+                          className="cursor-pointer"
+                        />
+                      ) : (
+                        <PiEyeSlash
+                          onClick={() => handleVisible(news.id)}
+                          className="cursor-pointer"
+                        />
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center py-4">
+                  No articles found.
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </div>
       {/* Pagination Section */}
-      <div className="flex justify-between items-center mt-4">
-        <span>Showing {news.length} entries</span>
-        <div className="flex space-x-2">
-          <button className="bg-gray-300 px-2 py-1 rounded">Previous</button>
-          <button className="bg-gray-300 px-2 py-1 rounded">1</button>
-          <button className="bg-gray-300 px-2 py-1 rounded">Next</button>
-        </div>
+      <div className="flex justify-between mt-4">
+        <span>Terdapat {news.length} Pengumuman </span>
       </div>
 
       {/* Modal Component */}
-      {isModalOpen && <ModalFadeNews toggleModal={toggleModal} editData={editingNews || { id: "", judul: "", tanggal: "", gambar: "" }} />}
+      {isModalOpen && (
+        <ModalFadeNews
+          toggleModal={toggleModal}
+          editData={
+            editingNews || { id: "", judul: "", tanggal: "", gambar: "" }
+          }
+        />
+      )}
     </div>
   );
 }

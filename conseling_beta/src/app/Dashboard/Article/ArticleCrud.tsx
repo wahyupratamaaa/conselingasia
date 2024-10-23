@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
 import { FaPlus } from "react-icons/fa";
 import TextDashboard from "@/app/components/Layout/textDashboard";
 import ModalFadeArticle from "@/app/components/Layout/FadeArticle";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
-import { PiEyeSlash, PiEye } from "react-icons/pi"; // Import ikon mata yang terlihat
+import { PiEyeSlash, PiEye } from "react-icons/pi";
+import Loader from "../../components/Layout/loader";
 
-// Definisikan interface untuk artikel
 interface Article {
   id: number;
   judul: string;
@@ -17,17 +17,15 @@ interface Article {
   isi: string;
   status: string;
   isVisible: boolean;
-  currenStatus: string; // Menambahkan properti isVisible
 }
 
-// Fungsi deleteArticle untuk menghapus artikel dengan SweetAlert
 const deleteArticle = async (
   id: number,
   setArticles: React.Dispatch<React.SetStateAction<Article[]>>,
   articles: Article[]
 ): Promise<void> => {
   const result = await Swal.fire({
-    title: "Apakah anda yakin ingin menghapus data?",
+    title: "Apakah anda yakin ingin menghapus Article?",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -44,8 +42,12 @@ const deleteArticle = async (
     if (!response.ok)
       throw new Error(`Failed to delete article with id: ${id}`);
 
-    setArticles(articles.filter((article) => article.id !== id)); // Menghapus artikel dari state
-    await Swal.fire("Deleted!", "Your article has been deleted.", "success");
+    setArticles(articles.filter((article) => article.id !== id));
+    await Swal.fire(
+      "Article Berhasil di hapus!",
+      "Klik ok untuk melanjutkan.",
+      "success"
+    );
   } catch (error) {
     console.error(
       "Error deleting article:",
@@ -63,7 +65,7 @@ export default function ArticleCrud() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingArticle, setEditingArticle] = useState<Article | null>(null); // State untuk artikel yang sedang di-edit
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
 
   const fetchArticles = async () => {
     try {
@@ -73,11 +75,15 @@ export default function ArticleCrud() {
         throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       console.log("Data dari API:", result.data);
+
       setArticles(
         result.data
           .sort((a: { id: number }, b: { id: number }) => b.id - a.id)
-          .map((article: Article) => ({ ...article, isVisible: true }))
-      ); // Mengatur isVisible ke true
+          .map((article: Article) => ({
+            ...article,
+            isVisible: article.status == "0" ? false : true,
+          }))
+      );
     } catch (error) {
       console.error("Error fetching articles:", error);
       await Swal.fire(
@@ -99,43 +105,39 @@ export default function ArticleCrud() {
     deleteArticle(id, setArticles, articles);
   };
 
-  const toggleVisibility = async (id: number, currentStatus: string) => {
+  const toggleVisibility = async (id: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/article/published/${id}`,
+        `http://localhost:5000/api/article/article_published/${id}`,
         {
           method: "PUT",
         }
       );
-      alert(response.status);
+      const datas = await response.json();
 
-      if (response.ok) {
-        if (currentStatus === "1") {
-          await Swal.fire({
-            icon: "success",
-            title: "Berhasil Diarsipkan",
-            text: "Artikel telah berhasil diarsipkan.",
-          });
-        } else {
-          await Swal.fire({
-            icon: "success",
-            title: "Berhasil Dibuka Arsip",
-            text: "Artikel telah berhasil dibuka arsipnya.",
-          });
-        }
-
-        fetchArticles();
-      } else {
+      if (!response.ok)
         throw new Error(`Failed to toggle visibility: ${response.status}`);
-      }
-    } catch (e: any) {
+
+      fetchArticles();
+
+      // Update the visibility state of the article in the local state
+      const message =
+        datas.data.status == "1"
+          ? "Artikel telah berhasil diarsipkan."
+          : "Artikel telah berhasil dibuka arsipnya.";
+      await Swal.fire({ icon: "success", title: "Berhasil", text: message });
+    } catch (error: any) {
       await Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: `Gagal mengubah visibilitas artikel. Error: ${e.message}`,
+        text: `Gagal mengubah visibilitas artikel. Error: ${error.message}`,
       });
     }
   };
+
+  useEffect(() => {
+    console.log("articles:", articles);
+  }, [articles]);
 
   useEffect(() => {
     fetchArticles();
@@ -145,23 +147,25 @@ export default function ArticleCrud() {
     setModalOpen(!isModalOpen);
     if (isModalOpen) {
       setEditingArticle(null);
-      fetchArticles();
-    } // Reset artikel yang sedang di-edit saat modal ditutup
+      fetchArticles(); // Reset article when closing modal
+    }
   };
 
   if (loading)
     return (
-      <div className="flex-1 items-center justify-center ">Loading data...</div>
+      <div className="flex items-center justify-center w-full h-screen">
+        <Loader />
+      </div>
     );
 
   return (
-    <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
+    <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100 overflow-hidden">
       <TextDashboard />
       <div className="flex justify-between items-center mb-4 mt-10">
         <h2 className="text-3xl font-bold">Data Artikel</h2>
         <button
           className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
-          onClick={toggleModal} // Untuk membuka modal buat artikel baru
+          onClick={toggleModal}
         >
           <FaPlus />
         </button>
@@ -184,9 +188,7 @@ export default function ArticleCrud() {
                 <tr
                   key={article.id}
                   className={`text-center ${
-                    article.status == "0"
-                      ? "opacity-50 bg-gray-100 text-gray-500"
-                      : ""
+                    article.isVisible ? "opacity-100" : "opacity-50"
                   }`}
                 >
                   <td className="px-4 py-2 border border-gray-300">
@@ -205,12 +207,11 @@ export default function ArticleCrud() {
                       className="h-20 w-full object-cover"
                     />
                   </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {article.isi}
+                  <td className="w-1/3 px-4 py-2 border border-gray-300">
+                    {article.isi.slice(0, 50)}...
                   </td>
-                  {/* Kolom untuk Status dengan tombol Edit, Delete, dan Hide */}
-                  <td className="px-4 py-2 border border-gray-300 ">
-                    <div className="flex justify-center items-center space-x-3 ">
+                  <td className="px-4 py-2 border border-gray-300">
+                    <div className="flex justify-center items-center space-x-3">
                       <BiSolidEdit
                         onClick={() => handleEdit(article)}
                         className="cursor-pointer text-blue-700"
@@ -219,18 +220,14 @@ export default function ArticleCrud() {
                         onClick={() => handleDelete(article.id)}
                         className="cursor-pointer text-red-500"
                       />
-                      {article.status != "0" ? (
+                      {article.isVisible ? (
                         <PiEye
-                          onClick={() =>
-                            toggleVisibility(article.id, article.status)
-                          }
+                          onClick={() => toggleVisibility(article.id)}
                           className="cursor-pointer"
                         />
                       ) : (
                         <PiEyeSlash
-                          onClick={() =>
-                            toggleVisibility(article.id, article.status)
-                          }
+                          onClick={() => toggleVisibility(article.id)}
                           className="cursor-pointer"
                         />
                       )}
@@ -248,19 +245,12 @@ export default function ArticleCrud() {
           </tbody>
         </table>
       </div>
-      {/* Teks di luar tabel untuk informasi jumlah entri dan navigasi */}
       <div className="flex justify-between items-center mt-4">
-        <span>Showing {articles.length} entries</span>
-        <div className="flex space-x-2">
-          <button className="bg-gray-300 px-2 py-1 rounded">Previous</button>
-          <button className="bg-gray-300 px-2 py-1 rounded">1</button>
-          <button className="bg-gray-300 px-2 py-1 rounded">Next</button>
-        </div>
+        <span>Terdapat {articles.length} Article</span>
       </div>
       {isModalOpen && (
         <ModalFadeArticle toggleModal={toggleModal} article={editingArticle} />
-      )}{" "}
-      {/* Kirim artikel ke modal */}
+      )}
     </div>
   );
 }

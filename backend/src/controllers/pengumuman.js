@@ -161,44 +161,21 @@ router.put("/:id", upload.single("gambar"), async (req, res) => {
   }
 });
 
-router.put("/published/:id", async (req, res) => {
+router.put("/pengumuman_published/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
     const pengumuman = await Pengumuman.findOne({ where: { id } });
     if (pengumuman) {
-      const updatedPengumuman = await article.update({
-        status: article.status == 0 ? 1 : 0,
-      });
-
-      response.status = "success";
-      response.message = "Artikel terpublish";
-      response.data = updatedArticle;
-      res.status(200).json(response);
-    } else {
-      response.message = "Artikel tidak ditemukan";
-      res.status(404).json(response);
-    }
-  } catch (error) {
-    console.warn(error);
-    response.message = "Terjadi kesalahan saat mengedit artikel";
-    res.status(500).json(response);
-  }
-});
-
-router.put("/archive/:id", async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const pengumuman = await Pengumuman.findOne({ where: { id } });
-    if (pengumuman) {
-      // Mengubah status menjadi 2 (arsip)
       const updatedPengumuman = await pengumuman.update({
-        status: 2,
+        status: pengumuman.status == 0 ? 1 : 0,
       });
 
       response.status = "success";
-      response.message = "Artikel telah diarsipkan";
+      response.message =
+        pengumuman.status == 0
+          ? "Artikel berhasil dipublikasikan"
+          : "Artikel berhasil diarsipkan";
       response.data = updatedPengumuman;
       res.status(200).json(response);
     } else {
@@ -207,9 +184,35 @@ router.put("/archive/:id", async (req, res) => {
     }
   } catch (error) {
     console.warn(error);
-    response.message = "Terjadi kesalahan saat mengarsipkan artikel";
+    response.message = error;
     res.status(500).json(response);
   }
 });
+
+// router.put("/archive/:id", async (req, res) => {
+//   const id = req.params.id;
+
+//   try {
+//     const pengumuman = await Pengumuman.findOne({ where: { id } });
+//     if (pengumuman) {
+//       // Mengubah status menjadi 2 (arsip)
+//       const updatedPengumuman = await pengumuman.update({
+//         status: 2,
+//       });
+
+//       response.status = "success";
+//       response.message = "Artikel telah diarsipkan";
+//       response.data = updatedPengumuman;
+//       res.status(200).json(response);
+//     } else {
+//       response.message = "Artikel tidak ditemukan";
+//       res.status(404).json(response);
+//     }
+//   } catch (error) {
+//     console.warn(error);
+//     response.message = "Terjadi kesalahan saat mengarsipkan artikel";
+//     res.status(500).json(response);
+//   }
+// });
 
 module.exports = router;

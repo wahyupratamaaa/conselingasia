@@ -24,22 +24,20 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
-      <div className="bg-center bg-fixed bg-cover bg-no-repeat bg-heroBackground flex items-center justify-center">
-        <div className="max-w-7xl max-w-6xl mx-10 ">
-          {/* max width 1280px */}
-          <Header />
-          <Hero />
-          <Article />
-          <ScrollToTop />
-          <Program />
-          <Galeri />
-          <Team />
-          <News />
-          <Contact />
-          <Footer />
-        </div>
-        </div>
-
-  
+    <div className="bg-center bg-fixed bg-cover bg-no-repeat bg-heroBackground flex items-center justify-center">
+      <div className="max-w-7xl mx-10 ">
+        {/* max width 1280px */}
+        <Header />
+        <Hero />
+        <Article />
+        <ScrollToTop />
+        <Program />
+        <Galeri />
+        <Team />
+        <News />
+        <Contact />
+        <Footer />
+      </div>
+    </div>
   );
 }

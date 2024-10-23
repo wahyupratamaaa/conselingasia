@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import ShowEye from "@/app/components/Layout/showEye";
 import TextDashboard from "@/app/components/Layout/textDashboard";
 import { FaUserEdit } from "react-icons/fa";
+import Loader from "@/app/components/Layout/loader"; // Loader component
 
 import { MdAutoDelete } from "react-icons/md";
 import Swal from "sweetalert2"; // Pastikan SweetAlert2 diimport
@@ -22,6 +23,7 @@ const UserCreate: React.FC = () => {
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(true); // Initial state for loading set to true
 
   // Re-Type Password State
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -31,6 +33,7 @@ const UserCreate: React.FC = () => {
   }, []);
 
   const fetchUsers = async () => {
+    setLoading(true); // Set loading to true when fetching users
     try {
       const response = await fetch("http://localhost:5000/api/home");
       const data = await response.json();
@@ -43,6 +46,7 @@ const UserCreate: React.FC = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+    setLoading(false); // Set loading to false when done
   };
 
   const handleSubmit = async (
@@ -52,11 +56,22 @@ const UserCreate: React.FC = () => {
 
     if (!username || !password) return;
 
+    if (confirmPassword !== password) {
+      Swal.fire({
+        title: "Error",
+        text: "Password dan Re-type Password tidak cocok!",
+        icon: "error",
+      });
+      return;
+    }
+
     const userData = {
       username,
       password,
       name,
     };
+
+    setLoading(true); // Set loading to true before submitting data
 
     try {
       const response = editUserId
@@ -78,7 +93,6 @@ const UserCreate: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Menampilkan SweetAlert jika username sudah digunakan
         if (data.message === "Username sudah digunakan, pilih username lain.") {
           Swal.fire({
             title: "Error",
@@ -88,6 +102,7 @@ const UserCreate: React.FC = () => {
         } else {
           console.error("Error:", data.message);
         }
+        setLoading(false); // Set loading to false if an error occurs
         return;
       }
 
@@ -121,6 +136,7 @@ const UserCreate: React.FC = () => {
     } catch (error) {
       console.error("Error during fetch:", error);
     }
+    setLoading(false); // Set loading to false after operation is done
   };
 
   const handleDelete = async (id: number) => {
@@ -141,12 +157,11 @@ const UserCreate: React.FC = () => {
         });
 
         Swal.fire({
-          title: "Deleted!",
+          title: "Data berhasil dihapus!",
           text: "User berhasil dihapus!",
           icon: "success",
         });
 
-        // Refresh data setelah penghapusan
         fetchUsers();
       }
     } catch (error) {
@@ -168,9 +183,17 @@ const UserCreate: React.FC = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
+  // const toggleConfirmPasswordVisibility = () => {
+  //   setShowConfirmPassword(!showConfirmPassword);
+  // };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col p-6 mt-10 h-screen w-screen bg-gray-100">
@@ -192,6 +215,7 @@ const UserCreate: React.FC = () => {
               className="text-start h-10 px-4 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
               value={username}
+              disabled={editUserId ? true : false}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
@@ -243,7 +267,7 @@ const UserCreate: React.FC = () => {
       {/* Tabel Pengguna */}
       <h2 className="text-2xl font-bold mt-4">Daftar Pengguna</h2>
       <div className="relative mt-2 max-h-[1000px] overflow-y-auto">
-        <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-md">
+        <table className="min-w-full bg-white border-collapse border border-gray-300 shadow-md rounded-md ">
           <thead className="bg-gray-200 sticky top-0 z-10 border-b border-gray-300">
             <tr>
               <th className="py-3 px-4 border-r border-gray-300  text-sm font-semibold text-gray-600 text-center">
@@ -262,7 +286,10 @@ const UserCreate: React.FC = () => {
           </thead>
           <tbody>
             {users.map((user, index) => (
-              <tr key={user.id} className="border-b border-gray-300">
+              <tr
+                key={user.id}
+                className="border-b border-gray-300 overflow-y-auto"
+              >
                 <td className="py-3 px-4 border-r border-gray-300 text-sm text-gray-700 text-center">
                   {index + 1}
                 </td>
@@ -290,7 +317,7 @@ const UserCreate: React.FC = () => {
             ))}
           </tbody>
         </table>
-        <div className="flex justify-between mt-2">
+        <div className="flex justify-between mt-4">
           <span>Terdapat {users.length} Data </span>
         </div>
       </div>

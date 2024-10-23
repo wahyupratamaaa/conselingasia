@@ -5,6 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const slugify = require("slugify");
+const { where } = require("sequelize");
 
 const response = {
   status: "failed",
@@ -105,11 +106,12 @@ router.get("/", async (req, res) => {
 
 // GET BY ID
 router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id.split("-").join(" ");
 
   try {
-    const article = await Article.findOne({ where: { id } });
+    const article = await Article.findOne({ where: { judul: id } });
 
+    console.warn(id);
     if (article) {
       response.status = "success";
       response.message = "Berhasil Mendapatkan article berdasarkan ID";
@@ -118,6 +120,7 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.warn(error);
   }
+
   res.status(200).json(response);
 });
 // PUT (EDIT) ARTICLE
@@ -167,18 +170,46 @@ router.put("/:id", upload.single("gambar"), async (req, res) => {
   }
 });
 
-router.put("/published/:id", async (req, res) => {
+// router.put("/published/:id", async (req, res) => {
+//   const id = req.params.id;
+
+//   try {
+//     const article = await Article.findOne({ where: { id } });
+//     if (article) {
+//       const updatedArticle = await article.update({
+//         status: article.status == 0 ? 1 : 0,
+//       });
+
+//       response.status = "success";
+//       response.message = "Artikel terpublish";
+//       response.data = updatedArticle;
+//       res.status(200).json(response);
+//     } else {
+//       response.message = "Artikel tidak ditemukan";
+//       res.status(404).json(response);
+//     }
+//   } catch (error) {
+//     console.warn(error);
+//     response.message = "Terjadi kesalahan saat mengedit artikel";
+//     res.status(500).json(response);
+//   }
+// });
+router.put("/article_published/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
     const article = await Article.findOne({ where: { id } });
     if (article) {
+      // Mengubah status artikel (0: diarsipkan, 1: dipublikasikan)
       const updatedArticle = await article.update({
         status: article.status == 0 ? 1 : 0,
       });
 
       response.status = "success";
-      response.message = "Artikel terpublish";
+      response.message =
+        article.status == 0
+          ? "Artikel berhasil dipublikasikan"
+          : "Artikel berhasil diarsipkan";
       response.data = updatedArticle;
       res.status(200).json(response);
     } else {
@@ -187,7 +218,7 @@ router.put("/published/:id", async (req, res) => {
     }
   } catch (error) {
     console.warn(error);
-    response.message = "Terjadi kesalahan saat mengedit artikel";
+    response.message = "Terjadi kesalahan saat mengubah status artikel";
     res.status(500).json(response);
   }
 });

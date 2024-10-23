@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-
     "dev": "next dev",
     "build": "rmdir /s /q .next && mkdir .next && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-react": "^9.3.1",
     "@heroicons/react": "^2.1.5",
     "aos": "^3.0.0-beta.6",
     "axios": "^1.7.7",
@@ -17,6 +17,7 @@
     "bootstrap-icons": "^1.11.3",
     "next": "14.2.8",
     "particles.js": "^2.0.0",
+    "quill": "^2.0.2",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.3.0",

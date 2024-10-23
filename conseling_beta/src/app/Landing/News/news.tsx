@@ -9,13 +9,13 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import imageBlog1 from "@/../public/news/blog/blog-1.jpg";
 import Link from "next/link";
 
-
 interface News {
-    id: number;
-    judul: string;
-    tanggal: string;
-    gambar: string;
-  }
+  id: number;
+  judul: string;
+  tanggal: string;
+  status: string;
+  gambar: string;
+}
 
 export default function Article() {
   const isMobile = useIsMobile();
@@ -55,7 +55,6 @@ export default function Article() {
     }
   };
 
-  
   // Pemanggilan pertama kali saat komponen di-mount
   useEffect(() => {
     fetchNews();
@@ -66,26 +65,31 @@ export default function Article() {
   }
 
   return (
-    <div className='mt-20 w-full bg-heroBackground'>
-        <div className=" row row-cols-1 row-cols-md-4 g-4" data-aos="fade-up">
-        {newss.map((news) => (
-            
+    <div className="mt-20 w-full bg-heroBackground">
+      <div className=" row row-cols-1 row-cols-md-4 g-4" data-aos="fade-up">
+        {newss
+          .filter((item) => item.status == "1")
+          .map((news) => (
             <div key={news.id} className="col">
-                <div className="card h-100">
-                    <img src={`http://localhost:5000/uploads/${news.gambar}`} alt="..." className="card-img-top" style={{ height: "200px", objectFit: "cover" }} />
-                    <div className="card-body">
-                        <Link href={`/newss/${(news.id)}`}><h5 className="card-title">{news.judul}</h5></Link>
-                        
-                    </div>
-                    <div className="card-footer">
-                        <small className="text-body-secondary">{news.tanggal}</small>
-                    </div>
+              <div className="card h-100">
+                <img
+                  src={`http://localhost:5000/uploads/${news.gambar}`}
+                  alt="..."
+                  className="card-img-top"
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <div className="card-body">
+                  <Link href={`/newss/${news.id}`}>
+                    <h5 className="card-title">{news.judul}</h5>
+                  </Link>
                 </div>
+                <div className="card-footer">
+                  <small className="text-body-secondary">{news.tanggal}</small>
+                </div>
+              </div>
             </div>
-            
-        ))}
-        </div>
+          ))}
+      </div>
     </div>
   );
 }
-
