@@ -167,8 +167,8 @@ router.put("/pengumuman_published/:id", async (req, res) => {
   try {
     const pengumuman = await Pengumuman.findOne({ where: { id } });
     if (pengumuman) {
-      const updatedPengumuman = await article.update({
-        status: article.status == 0 ? 1 : 0,
+      const updatedPengumuman = await pengumuman.update({
+        status: pengumuman.status == 0 ? 1 : 0,
       });
 
       response.status = "success";
@@ -176,7 +176,7 @@ router.put("/pengumuman_published/:id", async (req, res) => {
         pengumuman.status == 0
           ? "Artikel berhasil dipublikasikan"
           : "Artikel berhasil diarsipkan";
-      response.dafa = updatedPengumuman;
+      response.data = updatedPengumuman;
       res.status(200).json(response);
     } else {
       response.message = "Artikel tidak ditemukan";
@@ -184,7 +184,7 @@ router.put("/pengumuman_published/:id", async (req, res) => {
     }
   } catch (error) {
     console.warn(error);
-    response.message = "Terjadi kesalahan saat mengedit artikel";
+    response.message = error;
     res.status(500).json(response);
   }
 });

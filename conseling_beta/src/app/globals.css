@@ -6,6 +6,27 @@ body {
   background-color: white;
   font-family: var(--font-poppins), sans-serif; /* Menggunakan font Poppins */
 }
+/* 
+.controls {
+  display: flex;
+  border: 1px solid #ccc;
+  border-top: 0;
+  padding: 10px;
+}
+
+.controls-right {
+  margin-left: auto;
+}
+
+.state {
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+.state-title {
+  color: #999;
+  text-transform: uppercase;
+}
 
 /* :root {
   --background: #ffffff;

@@ -18,7 +18,7 @@ export default function Home() {
       <div className="max-w-screen mx-10">
         {/* max width 1280px */}
         <Header />
-        <Article/>
+        <Article />
         <Footer />
       </div>
     </div>

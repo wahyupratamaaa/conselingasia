@@ -5,6 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const slugify = require("slugify");
+const { where } = require("sequelize");
 
 const response = {
   status: "failed",
@@ -105,11 +106,12 @@ router.get("/", async (req, res) => {
 
 // GET BY ID
 router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.id.split("-").join(" ");
 
   try {
-    const article = await Article.findOne({ where: { id } });
+    const article = await Article.findOne({ where: { judul: id } });
 
+    console.warn(id);
     if (article) {
       response.status = "success";
       response.message = "Berhasil Mendapatkan article berdasarkan ID";
@@ -118,6 +120,7 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.warn(error);
   }
+
   res.status(200).json(response);
 });
 // PUT (EDIT) ARTICLE

@@ -75,10 +75,14 @@ export default function ArticleCrud() {
         throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       console.log("Data dari API:", result.data);
+
       setArticles(
         result.data
           .sort((a: { id: number }, b: { id: number }) => b.id - a.id)
-          .map((article: Article) => ({ ...article, isVisible: true }))
+          .map((article: Article) => ({
+            ...article,
+            isVisible: article.status == "0" ? false : true,
+          }))
       );
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -101,7 +105,7 @@ export default function ArticleCrud() {
     deleteArticle(id, setArticles, articles);
   };
 
-  const toggleVisibility = async (id: number, currentStatus: string) => {
+  const toggleVisibility = async (id: number) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/article/article_published/${id}`,
@@ -109,25 +113,16 @@ export default function ArticleCrud() {
           method: "PUT",
         }
       );
+      const datas = await response.json();
 
       if (!response.ok)
         throw new Error(`Failed to toggle visibility: ${response.status}`);
 
-      // Update the visibility state of the article in the local state
-      setArticles((prevArticles) =>
-        prevArticles.map((article) =>
-          article.id === id
-            ? {
-                ...article,
-                status: currentStatus === "1" ? "0" : "1",
-                isVisible: currentStatus === "1" ? false : true, // Set isVisible based on status
-              }
-            : article
-        )
-      );
+      fetchArticles();
 
+      // Update the visibility state of the article in the local state
       const message =
-        currentStatus === "1"
+        datas.data.status == "1"
           ? "Artikel telah berhasil diarsipkan."
           : "Artikel telah berhasil dibuka arsipnya.";
       await Swal.fire({ icon: "success", title: "Berhasil", text: message });
@@ -139,6 +134,10 @@ export default function ArticleCrud() {
       });
     }
   };
+
+  useEffect(() => {
+    console.log("articles:", articles);
+  }, [articles]);
 
   useEffect(() => {
     fetchArticles();
@@ -188,7 +187,7 @@ export default function ArticleCrud() {
               articles.map((article, index) => (
                 <tr
                   key={article.id}
-                  className={`text-center${
+                  className={`text-center ${
                     article.isVisible ? "opacity-100" : "opacity-50"
                   }`}
                 >
@@ -209,7 +208,7 @@ export default function ArticleCrud() {
                     />
                   </td>
                   <td className="w-1/3 px-4 py-2 border border-gray-300">
-                    {article.isi}
+                    {article.isi.slice(0, 50)}...
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
                     <div className="flex justify-center items-center space-x-3">
@@ -221,18 +220,14 @@ export default function ArticleCrud() {
                         onClick={() => handleDelete(article.id)}
                         className="cursor-pointer text-red-500"
                       />
-                      {article.status !== "0" ? (
+                      {article.isVisible ? (
                         <PiEye
-                          onClick={() =>
-                            toggleVisibility(article.id, article.status)
-                          }
+                          onClick={() => toggleVisibility(article.id)}
                           className="cursor-pointer"
                         />
                       ) : (
                         <PiEyeSlash
-                          onClick={() =>
-                            toggleVisibility(article.id, article.status)
-                          }
+                          onClick={() => toggleVisibility(article.id)}
                           className="cursor-pointer"
                         />
                       )}

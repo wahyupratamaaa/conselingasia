@@ -215,6 +215,7 @@ const UserCreate: React.FC = () => {
               className="text-start h-10 px-4 text-gray-900 placeholder-gray-400 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
               value={username}
+              disabled={editUserId ? true : false}
               onChange={(e) => setUsername(e.target.value)}
               required
             />

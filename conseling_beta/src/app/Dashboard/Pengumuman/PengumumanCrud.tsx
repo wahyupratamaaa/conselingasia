@@ -16,13 +16,18 @@ interface News {
   judul: string;
   tanggal: string;
   gambar: string;
+  status: string;
   isVisible: boolean;
 }
 
 // Fungsi deletePengumuman untuk menghapus artikel
-const deleteNews = async (id: string): Promise<void> => {
+const deleteNews = async (
+  id: string,
+  setNews: React.Dispatch<React.SetStateAction<News[]>>,
+  news: News[]
+): Promise<void> => {
   // Menampilkan alert konfirmasi dan menghentikan proses jika pengguna memilih "Cancel"
-  const result = Swal.fire({
+  const result = await Swal.fire({
     title: "Apakah anda yakin ingin menghapus data?",
     icon: "warning",
     showCancelButton: true,
@@ -30,7 +35,8 @@ const deleteNews = async (id: string): Promise<void> => {
     cancelButtonColor: "#d33",
     confirmButtonText: "Ya, delete!",
   });
-  if (!result) return;
+
+  if (!result.isConfirmed) return;
 
   try {
     const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`, {
@@ -40,6 +46,8 @@ const deleteNews = async (id: string): Promise<void> => {
     if (!response.ok) {
       throw new Error(`Failed to delete article with id: ${id}`);
     }
+
+    setNews(news.filter((news) => news.id !== id));
 
     console.log(`Pengumuman with id: ${id} deleted successfully`);
   } catch (error) {
@@ -74,7 +82,11 @@ export default function NewsCrud() {
       console.log("Data dari API:", result);
 
       // Ambil data artikel dari properti "data"
-      setNews(result.data);
+      setNews(
+        result.data.map((news: News) => {
+          return { ...news, isVisible: news.status == "0" ? false : true };
+        })
+      );
     } catch (error) {
       console.error("Error fetching articles:", error);
     } finally {
@@ -89,24 +101,41 @@ export default function NewsCrud() {
   // Fungsi untuk menghapus artikel
   const handleDelete = async (id: string) => {
     try {
-      await deleteNews(id);
-      setNews(news.filter((news) => news.id !== id)); // Menghapus artikel dari state
+      await deleteNews(id, setNews, news);
+      // setNews(news.filter((news) => news.id !== id)); // Menghapus artikel dari state
     } catch (error) {
       console.error("Error deleting article:", error);
     }
   };
 
   const handleVisible = async (id: string) => {
-    setNews(
-      news.map((news) =>
-        news.id === id ? { ...news, isVisible: !news.isVisible } : news
-      )
-    );
-    await Swal.fire({
-      icon: "success",
-      title: "Visibility Toggled",
-      text: "Article visibility has been updated.",
-    });
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/pengumuman/pengumuman_published/${id}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const datas = await response.json();
+
+      if (!response.ok)
+        throw new Error(`Failed to toggle visibility: ${response.status}`);
+
+      fetchNews();
+
+      await Swal.fire({
+        icon: "success",
+        title: datas.data.status == "0" ? "Buka" : "Tutup",
+        text: "Article visibility has been updated.",
+      });
+    } catch (error: any) {
+      await Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `Gagal mengubah visibilitas artikel. Error: ${error.message}`,
+      });
+    }
   };
 
   // Pemanggilan pertama kali saat komponen di-mount

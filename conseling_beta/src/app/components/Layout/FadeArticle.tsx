@@ -1,6 +1,19 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
-import { CKEditor } from "ckeditor4-react";
+// import { CKEditor } from "ckeditor4-react";
+import Quill from "quill";
+// import Editor from "@/app/components/Layout/Editor";
+const Delta = Quill.import("delta");
+import dynamic from "next/dynamic";
+
+const CustomEditor = dynamic(
+  () => import("@/app/components/Layout/custom-editor"),
+  {
+    ssr: false,
+  }
+);
 
 interface ModalFadeArticleProps {
   toggleModal: () => void;
@@ -19,6 +32,7 @@ export default function ModalFadeArticle({
   toggleModal,
   article,
 }: ModalFadeArticleProps) {
+  const quillRef = useRef();
   const [judul, setJudul] = useState(article?.judul || "");
   const [tanggal, setTanggal] = useState(article?.tanggal || "");
   const [gambar, setGambar] = useState<File | null>(null);
@@ -31,6 +45,10 @@ export default function ModalFadeArticle({
       setIsi(article.isi);
     }
   }, [article]);
+
+  const captioValue = (value: string) => {
+    setIsi(value);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,10 +105,7 @@ export default function ModalFadeArticle({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
-      <div
-        className="relative p-4 w-full max-w-lg max-h-full"
-        style={{ width: "1000%" }}
-      >
+      <div className="relative p-4 w-4/5 h-full">
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -173,20 +188,18 @@ export default function ModalFadeArticle({
               >
                 Isi
               </label>
-              <textarea
+              <CustomEditor result={captioValue} defaultValue={isi} />
+              {/* <textarea
                 // CkEditor=
+
                 name="isi"
                 id="isi"
                 value={isi}
                 onChange={(e) => setIsi(e.target.value)}
-                rows={4}
+                rows={16}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 required
-              ></textarea>
-              <CKEditor
-                initData={isi}
-                onChange={(e) => setIsi(e.editor.getData())}
-              />
+              ></textarea> */}
             </div>
             <button
               type="submit"

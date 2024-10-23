@@ -3,7 +3,7 @@ import { FaHome, FaFileAlt, FaBullhorn, FaUserPlus } from "react-icons/fa";
 
 export default function Home() {
   return (
-    <aside className="lg:w-1/4 w-full bg-gradient-to-b from-sky-800 to-sky-900 text-white flex flex-col h-screen sticky top-0 shadow-lg overflow-hidden">
+    <aside className="max-w-80 w-full bg-gradient-to-b from-sky-800 to-sky-900 text-white flex flex-col h-screen sticky top-0 shadow-lg overflow-hidden">
       <div className="p-6 border-b border-sky-700">
         <div className="flex items-center space-x-4">
           <img

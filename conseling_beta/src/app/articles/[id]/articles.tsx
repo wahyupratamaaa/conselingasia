@@ -11,6 +11,14 @@ interface Article {
   isi: string;
 }
 
+const HtmlWithChildren = ({ html }: any) => {
+  return (
+    <>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </>
+  );
+};
+
 export default function ArticleDetail() {
   const { id } = useParams(); // Mengambil id dari URL
   const [article, setArticle] = useState<Article | null>(null);
@@ -43,6 +51,10 @@ export default function ArticleDetail() {
     }
   };
 
+  useEffect(() => {
+    console.log(article);
+  }, [article]);
+
   if (loading) {
     return <div>Loading article...</div>;
   }
@@ -66,7 +78,8 @@ export default function ArticleDetail() {
           <small>{article.tanggal}</small>
         </div>
       </div>
-      <p>{article.isi}</p>
+      <HtmlWithChildren html={article.isi} />
+      {/* <div dangerouslySetInnerHTML={{ __html: article.isi }}>{article.isi}</div> */}
     </div>
   );
 }
