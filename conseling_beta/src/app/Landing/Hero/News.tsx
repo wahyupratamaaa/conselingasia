@@ -108,7 +108,10 @@ export default function News() {
             className="relative"
             data-aos="fade-right"
             data-aos-duration="1000"
+
           ></div>
+          </div>
+
 
           <div className="container">
             <div className="row justify-content-start">
@@ -117,6 +120,7 @@ export default function News() {
                   .filter((item) => item.status == "1")
                   .slice(-3)
                   .reverse()
+
                   .map((news) => (
                     <div key={news.id} className="col-xl-4 col-md-6">
                       <article
@@ -145,6 +149,40 @@ export default function News() {
                       </article>
                     </div>
                   ))
+
+                  .map(
+                    (
+                      news,
+                    ) => (
+                      <div key={news.id} className="col-xl-4 col-md-6">
+                        <article
+                          className=""
+                          data-aos="fade-up"
+                          data-aos-delay="500"
+                          style={{
+                            boxShadow:
+                              "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: isMobile ? 20 : 30,
+                          }}
+                        >
+                          <div className="">
+                            <img
+                              src={`http://localhost:5000/uploads/${news.gambar}`}
+                              alt={news.judul}
+                              className="card-img-top"
+                              style={{ height: "200px", objectFit: "cover" }}
+                            />
+                          </div>
+                          <br />
+                          <Link href={`/newss/${(news.id)}`}>
+                            <h4>{news.judul}</h4>
+                          </Link>
+                          <p>{news.tanggal}</p>
+                        </article>
+                      </div>
+                    )
+                  )
+
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center py-4">
