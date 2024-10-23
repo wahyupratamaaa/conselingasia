@@ -84,7 +84,7 @@ export default function NewsCrud() {
       // Ambil data artikel dari properti "data"
       setNews(
         result.data.map((news: News) => {
-          return { ...news, isVisible: news.status == "0" ? false : true };
+          return { ...news, isVisible: news.status == "0" ? true : false };
         })
       );
     } catch (error) {
@@ -126,7 +126,10 @@ export default function NewsCrud() {
 
       await Swal.fire({
         icon: "success",
-        title: datas.data.status == "0" ? "Buka" : "Tutup",
+        title:
+          datas.data.status == "0"
+            ? "Berhasil Diarsipkan"
+            : "Berhasil Membuka Arsip",
         text: "Article visibility has been updated.",
       });
     } catch (error: any) {
@@ -255,12 +258,12 @@ export default function NewsCrud() {
                         className="cursor-pointer text-red-500"
                       />
                       {news.isVisible ? (
-                        <PiEye
+                        <PiEyeSlash
                           onClick={() => handleVisible(news.id)}
                           className="cursor-pointer"
                         />
                       ) : (
-                        <PiEyeSlash
+                        <PiEye
                           onClick={() => handleVisible(news.id)}
                           className="cursor-pointer"
                         />
