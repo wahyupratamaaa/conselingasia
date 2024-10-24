@@ -83,7 +83,9 @@ export default function NewsCrud() {
 
       // Ambil data artikel dari properti "data"
       setNews(
-        result.data.map((news: News) => {
+        result.data
+        .sort(((a:{id:number}, b:{id:number}) => b.id - a.id))
+        .map((news: News) => {
           return { ...news, isVisible: news.status == "0" ? true : false };
         })
       );
@@ -224,7 +226,8 @@ export default function NewsCrud() {
           </thead>
           <tbody>
             {news.length > 0 ? (
-              news.map((news, index) => (
+              news
+              .map((news, index) => (
                 <tr
                   key={news.id}
                   className={`text-center  ${

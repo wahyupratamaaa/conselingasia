@@ -109,9 +109,8 @@ router.get("/:id", async (req, res) => {
   const id = req.params.id.split("-").join(" ");
 
   try {
-    const article = await Article.findOne({ where: { judul: id } });
+    const article = await Article.findOne({ where: { id: id } });
 
-    console.warn(id);
     if (article) {
       response.status = "success";
       response.message = "Berhasil Mendapatkan article berdasarkan ID";

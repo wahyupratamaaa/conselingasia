@@ -74,7 +74,7 @@ export default function Home() {
     <div className="relative min-h-screen px-10">
       <div className="w-screen flex justify-start">
         <a
-          href="/Dashboard"
+          href="/"
           className={`lg:block ${
             isHover ? "text-white bg-gray-600" : "text-black"
           } px-3 items-center m-4 rounded-md font-sans font-bold active:bg-customBlueHover no-underline border border-bg`}

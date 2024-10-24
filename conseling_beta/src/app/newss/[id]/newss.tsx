@@ -30,6 +30,7 @@ export default function NewsDetail() {
   const fetchNewsById = async (id: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/pengumuman/${id}`);
+      console.log(id);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
