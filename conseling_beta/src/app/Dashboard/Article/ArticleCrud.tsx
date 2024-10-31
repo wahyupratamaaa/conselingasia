@@ -123,7 +123,7 @@ export default function ArticleCrud() {
 
       // Update the visibility state of the article in the local state
       const message =
-        datas.data.status == "1"
+        datas.data.status == "0"
           ? "Artikel telah berhasil diarsipkan."
           : "Artikel telah berhasil dibuka arsipnya.";
       await Swal.fire({ icon: "success", title: "Berhasil", text: message });
@@ -209,7 +209,7 @@ export default function ArticleCrud() {
                     />
                   </td>
                   <td className="w-1/3 px-4 py-2 border border-gray-300">
-                    {article.isi.replace(/<\/?[^>]+(>|$)/g, "").slice(0, 50)}
+                    {article.isi.replace(/<\/?[^>]+(>|$)/g, "").slice(0, 200)}
                     ...
                   </td>
                   <td className="px-4 py-2 border border-gray-300">

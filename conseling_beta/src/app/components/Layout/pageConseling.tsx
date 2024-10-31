@@ -36,7 +36,7 @@ export default function Home() {
           <li>
             <a
               href="/Dashboard/Article"
-              className="flex items-center py-3 px-4 text-center rounded-lg hover:bg-gray-700 transition duration-300 shadow-md hover:shadow-lg"
+              className="flex items-center py-3 px-4 text-center rounded-lg hover:bg-gray-700   transition duration-300 shadow-md hover:shadow-lg"
             >
               <FaFileAlt className="mr-2" />
               Artikel
