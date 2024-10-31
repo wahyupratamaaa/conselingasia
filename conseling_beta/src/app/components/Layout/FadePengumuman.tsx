@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 
 interface ModalFadeNewsProps {
   toggleModal: () => void;
-  editData?: { id: string; judul: string; tanggal: string; gambar?: string }; // Tambahkan prop ini untuk data edit
+  editData?: { id: string; judul: string; tanggal: string; gambar: string };
 }
 
 export default function ModalFadeNews({
@@ -20,6 +20,7 @@ export default function ModalFadeNews({
     if (editData) {
       setJudul(editData.judul);
       setTanggal(editData.tanggal);
+      setGambar(editData.gambar);
       setEditId(editData.id);
     }
   }, [editData]);
@@ -66,6 +67,7 @@ export default function ModalFadeNews({
       const data = await res.json(); // Ambil data dari respons
 
       if (data.status !== "failed") {
+        console.log(data);
         Swal.fire({
           title: editData
             ? "Pengumuman Berhasil Diperbarui!"

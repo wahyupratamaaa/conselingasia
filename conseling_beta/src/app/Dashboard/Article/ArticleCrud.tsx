@@ -98,6 +98,7 @@ export default function ArticleCrud() {
 
   const handleEdit = (article: Article) => {
     setEditingArticle(article);
+    // set
     setModalOpen(true);
   };
 
@@ -208,7 +209,8 @@ export default function ArticleCrud() {
                     />
                   </td>
                   <td className="w-1/3 px-4 py-2 border border-gray-300">
-                    {article.isi.slice(0, 50)}...
+                    {article.isi.replace(/<\/?[^>]+(>|$)/g, "").slice(0, 50)}
+                    ...
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
                     <div className="flex justify-center items-center space-x-3">
