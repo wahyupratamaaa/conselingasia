@@ -70,11 +70,13 @@ export default function News() {
       data-aos-duration="1000"
       id="news"
       className="w-full"
-      style={{ marginBottom: isMobile ? 10 : 20 }}
+      style={{ 
+        marginBottom: isMobile ? 10 : 20,
+      paddingTop: isMobile ? 30 : 75}}
     >
       <div
         style={{ marginTop: isMobile ? 100 : 50 }}
-        className="w-full flex flex-col justify-https://github.com/wahyupratamaaa/big-task/pull/3/conflict?name=conseling%2BBeta%2Bv0.3%252Fsrc%252Fapp%252FLanding%252FHero%252FNews.tsx&ancestor_oid=6ba56408fe12c0696b6b72a9511e1402ce5961f3&base_oid=318d1e89099cd7fd8b352b1c1515eacce4b92b7b&head_oid=2b64167b2d365b26ae0a739e78c14cd71b56e470between lg:flex-row lg:justify-start items-center"
+        className="w-full flex flex-col justify-center lg:flex-row lg:justify-start items-center"
       >
         <div
           className="flex justify-center text-customBlueText"
@@ -138,7 +140,7 @@ export default function News() {
                           />
                         </div>
                         <br />
-                        <Link href={`/newss/${news.id}`}>
+                        <Link href={`/newss/${news.id}`} target="_blank">
                           <h4>{news.judul}</h4>
                         </Link>
                         <p>{news.tanggal.split(" ", 1)[0]}</p>
@@ -154,7 +156,7 @@ export default function News() {
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Link href={"/Landing/News"} style={{ alignItems: "center" }}>
+              <Link href={"/Landing/News"} style={{ alignItems: "center" }} target="_blank">
                 <button
                   className="text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
                   style={{

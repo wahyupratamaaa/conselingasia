@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 
 import Header from "@/app/Landing/NavbarHeader/page";
 import Hero from "@/app/Landing/Hero/HeroSection";
+import Visi from "@/app/Landing/Hero/Visi"
 import Article from "@/app/Landing/Hero/Article";
 import Program from "@/app/Landing/Hero/Program";
 import Galeri from "@/app/Landing/Hero/Galery";
@@ -29,6 +30,7 @@ export default function Home() {
         {/* max width 1280px */}
         <Header />
         <Hero />
+        <Visi/>
         <Article />
         <ScrollToTop />
         <Program />

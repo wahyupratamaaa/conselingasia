@@ -7,7 +7,9 @@ export default function OpenQuestion() {
 
   return (
     <>
-      <div id="program" className="w-full text-center " data-aos="fade-right" data-aos-duration="1000">
+      <div style={{
+        paddingTop: isMobile ? 30 : 75
+      }} id="program" className="w-full text-center " data-aos="fade-right" data-aos-duration="1000">
         <div className="justify-center text-center" style={{ marginTop: isMobile ? 50 : 75 }}>
           <div style={{ height: "auto" }} className="text-center">
             <div className="flex flex-col items-center lg:hidden">

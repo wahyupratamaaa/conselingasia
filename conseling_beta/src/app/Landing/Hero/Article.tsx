@@ -61,13 +61,15 @@ export default function Article() {
 
   return (
     <div
+    style={{
+      marginBottom: isMobile ? 10 : 20,
+      paddingTop: isMobile ? 10 : 75,
+    }}
       data-aos="fade-right"
       data-aos-duration="1000"
       id="article"
       className="w-full"
-      style={{
-        marginBottom: isMobile ? 10 : 20,
-      }}
+      
     >
       <div
         style={{ marginTop: isMobile ? 100 : 50 }}
@@ -110,7 +112,7 @@ export default function Article() {
             data-aos-duration="1000"
           >
             <h3 className="text-customBlueText mx-2">Terbaru</h3>
-            <Link href={"/Landing/Article"}>
+            <Link href={"/Landing/Article"} target="_blank">
               <button
                 className="absolute text-white font-sans font-bold bg-customBlue rounded-md active:bg-customBlueHover"
                 onClick={() => console.log("errror")}
@@ -159,7 +161,7 @@ export default function Article() {
                             />
                           </div>
                           <br />
-                          <Link href={`/articles/${article.id}`}>
+                          <Link href={`/articles/${article.id}`} target="_blank">
                             <h4>{article.judul}</h4>
                           </Link>
                           <p>{article.tanggal}</p>

@@ -28,7 +28,7 @@ export default function Footer() {
           ></div>
         ) : (
           <div className="grid grid-cols-2">
-            <div>
+            <div style={{marginTop: 50}}>
               <div className="flex flex-row">
                 <div>
                   <Image
@@ -39,7 +39,7 @@ export default function Footer() {
                   />
                 </div>
                 <div>
-                  <h2 style={{ padding: "20 0 0 20" }}>
+                  <h2 style={{paddingLeft: 20}}>
                     Konseling Institut Asia
                   </h2>
                 </div>
@@ -51,7 +51,7 @@ export default function Footer() {
                 sebagai pendamping dan penanganan masalah belajar mahasiswa dari
                 aspek psikologis
               </div>
-              <div>
+              {/* <div>
                 <br />
                 BEKERJA SAMA DENGAN :
               </div>
@@ -68,10 +68,10 @@ export default function Footer() {
                   alt="logo"
                   unoptimized
                 />
-              </div>
+              </div> */}
               <div></div>
             </div>
-            <div style={{ position: "relative", textAlign: "center" }}>
+            <div style={{ position: "relative", textAlign: "center", }}>
               {/* Gambar footerlogo */}
               <Image
                 src={footerlogo}
@@ -85,12 +85,36 @@ export default function Footer() {
                 style={{
                   position: "absolute",
                   top: "0",
-                  left: "0",
+                  right: "0",
                   width: "100%",
                   padding: "20px",
+                  justifyContent: "flex-end",
                 }}
               >
-                <h3 style={{ textAlign: "center" }}>Visi</h3>
+                <div>
+                <br />
+                BEKERJA SAMA DENGAN :
+              </div>
+              <div
+    className="flex flex-row justify-end"
+    style={{
+      gap: "10px", // Optional: tambahkan jarak antar gambar
+    }}
+  >
+    <Image
+      style={{ width: 150, height: 60 }}
+      src={himpsilogo}
+      alt="logo"
+      unoptimized
+    />
+    <Image
+      style={{ width: 150, height: 60 }}
+      src={abkinlogo}
+      alt="logo"
+      unoptimized
+    />
+  </div>
+                {/* <h3 style={{ textAlign: "center" }}>Visi</h3>
                 <p>
                   Menjadikan institut teknologi dan bisnis asia malang
                   sebagai kampus yang memiliki layanan prima dalam konseling
@@ -107,7 +131,7 @@ export default function Footer() {
                 <p>
                   2. Membangun pribadi mahasiswa yang kompetitif dalam dunia
                   profesional, berkarakter dan memiliki kepribadian unggul.
-                </p>
+                </p> */}
               </div>
             </div>
 

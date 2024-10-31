@@ -71,8 +71,7 @@ export default function ModalFadeArticle({
 
       const method = article ? "PUT" : "POST"; // Jika ada article, berarti sedang mengedit
       const url = article
-        ? `http://localhost:5000/api/article/${article.id}`
-        : "http://localhost:5000/api/article";
+        ? `http://localhost:5000/api/article/${article.id}` : "http://localhost:5000/api/article";
 
       const res = await fetch(url, {
         method,
@@ -162,7 +161,6 @@ export default function ModalFadeArticle({
                 value={tanggal}
                 onChange={(e) => setTanggal(e.target.value)}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                required
               />
             </div>
             <div>
@@ -178,7 +176,6 @@ export default function ModalFadeArticle({
                 id="gambar"
                 onChange={(e) => setGambar(e.target.files?.[0] || null)}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                required={!article} // Wajib upload gambar jika membuat artikel baru
               />
             </div>
             <div>

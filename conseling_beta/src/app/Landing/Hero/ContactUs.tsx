@@ -3,18 +3,20 @@ import React from "react";
 import Image from "next/image";
 import radiocheked from "@/../public/radiochecked.png";
 import radiounchecked from "@/../public/radiobtnunchecked.png";
+import useIsMobile from "@/app/Hooks/resizeHooks";
 
 export default function ContactPage() {
+  const isMobile = useIsMobile();
   return (
     <>
       <div
         id="contact"
         style={{
-          padding: "75px 0px 0px 0px",
+          paddingTop: isMobile ? 30 : 75,
           width: 100 + "%",
         }}
       >
-        <h1 className="text-center">Kontak</h1>
+        <h1 style={{marginTop: 50}} className="text-center text-customBlueText">Kontak</h1>
       </div>
       <div className="w-full flex flex-col lg:flex-row">
         {/* Bagian Informasi Kontak */}
