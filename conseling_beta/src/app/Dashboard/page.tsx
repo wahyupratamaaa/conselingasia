@@ -3,11 +3,13 @@ import TabConseling from "../components/Layout/pageConseling";
 import { useRouter } from "next/navigation";
 import { IoMdArrowDropdown } from "react-icons/io";
 import TextDashboard from "../components/Layout/textDashboard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+// import { useEffect } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
+  const [userData, setUserData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDown = () => {
@@ -45,6 +47,11 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    const user = sessionStorage.getItem("userData");
+    setUserData(JSON.parse(user || "{}"));
+  }, []);
+
   return (
     <>
       <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100 overflow-hidden">
@@ -57,7 +64,7 @@ export default function Dashboard() {
               className="text-sm font-bold cursor-pointer flex items-center"
               onClick={toggleDown}
             >
-              Super User <IoMdArrowDropdown className="ml-1" />
+              {userData?.username} <IoMdArrowDropdown className="ml-1" />
             </h1>
 
             {isOpen && (

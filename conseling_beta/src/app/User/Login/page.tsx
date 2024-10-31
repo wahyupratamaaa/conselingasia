@@ -1,5 +1,3 @@
-
-
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,23 +32,27 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/home/login", { // periksa endpoint login
+      const res = await fetch("http://localhost:5000/api/home/login", {
+        // periksa endpoint login
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       // Cek apakah respons berhasil
       if (!res.ok) {
         throw new Error("access salah");
       }
-  
+
       const data = await res.json();
-  
+      // console.log("data akses login kg", data);
+
       if (data.status === "success") {
-        console.log("response data:", data.status);
+        // console.log("response data:", data.status);
+        sessionStorage.setItem("userData", JSON.stringify(data.data));
+        // console.log("data anda disini", data.data);
         router.push("/Dashboard");
         Swal.fire({
           title: "Success Login!",

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 
 interface ModalFadeNewsProps {
   toggleModal: () => void;
-  editData?: { id: string; judul: string; tanggal: string; gambar?: string }; // Tambahkan prop ini untuk data edit
+  editData?: { id: string; judul: string; tanggal: string; gambar: string };
 }
 
 export default function ModalFadeNews({
@@ -20,6 +20,7 @@ export default function ModalFadeNews({
     if (editData) {
       setJudul(editData.judul);
       setTanggal(editData.tanggal);
+      setGambar(editData.gambar);
       setEditId(editData.id);
     }
   }, [editData]);
@@ -66,6 +67,7 @@ export default function ModalFadeNews({
       const data = await res.json(); // Ambil data dari respons
 
       if (data.status !== "failed") {
+        console.log(data);
         Swal.fire({
           title: editData
             ? "Pengumuman Berhasil Diperbarui!"
@@ -131,7 +133,7 @@ export default function ModalFadeNews({
                   id="title"
                   value={judul}
                   onChange={(e) => setJudul(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Type article title"
                   required
                 />
