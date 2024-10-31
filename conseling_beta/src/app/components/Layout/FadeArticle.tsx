@@ -33,10 +33,10 @@ export default function ModalFadeArticle({
   article,
 }: ModalFadeArticleProps) {
   // const quillRef = useRef();
-  const [judul, setJudul] = useState(article?.judul || "");
+  const [judul, setJudul] = useState<string>(article?.judul || "");
   const [tanggal, setTanggal] = useState(article?.tanggal || "");
-  const [gambar, setGambar] = useState<File | null>(null);
-  const [preview, setPreview] = useState<File | null>(null);
+  const [gambar, setGambar] = useState<File | string | null | undefined>("");
+  const [preview, setPreview] = useState<string | null>("");
   const [isi, setIsi] = useState(article?.isi || "");
 
   useEffect(() => {
@@ -59,8 +59,12 @@ export default function ModalFadeArticle({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setGambar(file || null);
-    const blobUrl = URL.createObjectURL(file);
-    setPreview(blobUrl);
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      setPreview(blobUrl);
+    } else {
+      setPreview(null);
+    }
     // setPreview(file);
     // setIsi(""); // Mengubah gambar hanya ketika ada file baru
   };
@@ -189,9 +193,9 @@ export default function ModalFadeArticle({
               <div className="w-64 mb-4">
                 <img
                   src={
-                    preview || `http://localhost:5000/uploads/${article.gambar}`
+                    preview || `http://localhost:5000/uploads/${article?.gambar}`
                   }
-                  alt={article.judul}
+                  alt={article?.judul}
                   className="w-full object-cover object-right"
                 />
               </div>
@@ -205,12 +209,11 @@ export default function ModalFadeArticle({
                 type="file"
                 name="gambar"
                 id="gambar"
-                src={article.gambar}
+                src={article?.gambar}
                 // onChange={(e) => setGambar(e.target.files?.[0] || null)}
                 onChange={handleFileChange}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 required={!article}
-                defaultValue={article?.gambar ? "" : null}
               />
             </div>
             <div>
