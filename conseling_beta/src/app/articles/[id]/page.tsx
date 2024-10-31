@@ -3,7 +3,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Image from "next/image";
+
 
 import Header from "@/app/Landing/Article/headArticle";
 import Footer from "@/app/Landing/Footer/page";

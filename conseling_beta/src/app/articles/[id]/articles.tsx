@@ -39,6 +39,8 @@ export default function ArticleDetail() {
   const fetchArticleById = async (id: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/article/${id}`);
+      console.log(id);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -56,15 +58,15 @@ export default function ArticleDetail() {
   }, [article]);
 
   if (loading) {
-    return <div>Loading article...</div>;
+    return <div>Loading artikel...</div>;
   }
 
   if (!article) {
-    return <div>Article not found</div>;
+    return <div>Artikel tidak ditemukan</div>;
   }
 
   return (
-    <div className="w-full mt-20">
+    <div className="w-full mt-20 mx-12">
       <div className="flex flex-col">
         <h1 className="text-center mb-5 text-customBlueText">
           {article.judul}
@@ -77,8 +79,15 @@ export default function ArticleDetail() {
           />
           <small>{article.tanggal}</small>
         </div>
+        <div style={{margin: "0 50px 0 50px"}}>
+        <HtmlWithChildren html={article.isi} />
       </div>
-      <HtmlWithChildren html={article.isi} />
+        
+      </div>
+      
+      
+      
+      
       {/* <div dangerouslySetInnerHTML={{ __html: article.isi }}>{article.isi}</div> */}
     </div>
   );

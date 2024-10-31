@@ -13,6 +13,7 @@ interface Article {
   id: number;
   judul: string;
   tanggal: string;
+  status: string;
   gambar: string;
   isi: string;
 }
@@ -68,29 +69,29 @@ export default function Article() {
   return (
     <div className="mt-20 w-full bg-heroBackground">
       <div className=" row row-cols-1 row-cols-md-4 g-4" data-aos="fade-up">
-        {articles.map((article) => (
-          <div key={article.id} className="col">
-            <div className="card h-100">
-              <img
-                src={`http://localhost:5000/uploads/${article.gambar}`}
-                alt="..."
-                className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <Link href={`/articles/${generateSlug(article.judul)}`}>
-                  <h5 className="card-title">{article.judul}</h5>
-                </Link>
-                <div className="card-text">
-                  <p className="truncate max-w-xs">{article.isi}</p>
+        {articles
+          .filter((item) => item.status == "1")
+          .reverse()
+          .map((article) => (
+            <div key={article.id} className="col">
+              <div className="card h-100">
+                <img
+                  src={`http://localhost:5000/uploads/${article.gambar}`}
+                  alt="..."
+                  className="card-img-top"
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <div className="card-body">
+                  <Link href={`/articles/${article.id}`}>
+                    <h5 className="card-title">{article.judul}</h5>
+                  </Link>
+                </div>
+                <div className="card-footer">
+                  <small className="text-body-secondary">{article.tanggal}</small>
                 </div>
               </div>
-              <div className="card-footer">
-                <small className="text-body-secondary">{article.tanggal}</small>
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

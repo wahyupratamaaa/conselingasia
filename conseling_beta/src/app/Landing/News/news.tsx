@@ -69,6 +69,7 @@ export default function Article() {
       <div className=" row row-cols-1 row-cols-md-4 g-4" data-aos="fade-up">
         {newss
           .filter((item) => item.status == "1")
+          .reverse()
           .map((news) => (
             <div key={news.id} className="col">
               <div className="card h-100">
