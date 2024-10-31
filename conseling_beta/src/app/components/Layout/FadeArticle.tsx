@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, use } from "react";
 import Swal from "sweetalert2";
 // import { CKEditor } from "ckeditor4-react";
-import Quill from "quill";
+// import Quill from "quill";
 // import Editor from "@/app/components/Layout/Editor";
-const Delta = Quill.import("delta");
+// const Delta = Quill.import("delta");
 import dynamic from "next/dynamic";
 
 const CustomEditor = dynamic(
@@ -32,26 +32,46 @@ export default function ModalFadeArticle({
   toggleModal,
   article,
 }: ModalFadeArticleProps) {
-  const quillRef = useRef();
+  // const quillRef = useRef();
   const [judul, setJudul] = useState(article?.judul || "");
   const [tanggal, setTanggal] = useState(article?.tanggal || "");
   const [gambar, setGambar] = useState<File | null>(null);
+  const [preview, setPreview] = useState<File | null>(null);
   const [isi, setIsi] = useState(article?.isi || "");
 
   useEffect(() => {
     if (article) {
       setJudul(article.judul);
-      setTanggal(article.tanggal);
+      setTanggal(article.tanggal.split(" ")[0]);
+      setGambar(article.gambar);
       setIsi(article.isi);
     }
   }, [article]);
 
   const captioValue = (value: string) => {
     setIsi(value);
+    // setGambar(null);
   };
+
+  // const valueImage = (image: string) => {
+  //   setGambar(image);
+  // }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setGambar(file || null);
+    const blobUrl = URL.createObjectURL(file);
+    setPreview(blobUrl);
+    // setPreview(file);
+    // setIsi(""); // Mengubah gambar hanya ketika ada file baru
+  };
+
+  useEffect(() => {
+    console.log(preview);
+  }, [preview]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(judul, tanggal, gambar, isi);
 
     if (!judul || !tanggal || !gambar || !isi) {
       Swal.fire({
@@ -71,7 +91,8 @@ export default function ModalFadeArticle({
 
       const method = article ? "PUT" : "POST"; // Jika ada article, berarti sedang mengedit
       const url = article
-        ? `http://localhost:5000/api/article/${article.id}` : "http://localhost:5000/api/article";
+        ? `http://localhost:5000/api/article/${article.id}`
+        : "http://localhost:5000/api/article";
 
       const res = await fetch(url, {
         method,
@@ -104,7 +125,7 @@ export default function ModalFadeArticle({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
-      <div className="relative p-4 w-4/5 h-full">
+      <div className="relative p-4 w-screen h-full ">
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -130,7 +151,7 @@ export default function ModalFadeArticle({
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
-            <div>
+            <div className="flex-grow">
               <label
                 htmlFor="judul"
                 className="block text-sm font-medium text-gray-900 dark:text-white"
@@ -161,9 +182,19 @@ export default function ModalFadeArticle({
                 value={tanggal}
                 onChange={(e) => setTanggal(e.target.value)}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                required
               />
             </div>
             <div>
+              <div className="w-64 mb-4">
+                <img
+                  src={
+                    preview || `http://localhost:5000/uploads/${article.gambar}`
+                  }
+                  alt={article.judul}
+                  className="w-full object-cover object-right"
+                />
+              </div>
               <label
                 htmlFor="gambar"
                 className="block text-sm font-medium text-gray-900 dark:text-white"
@@ -174,36 +205,31 @@ export default function ModalFadeArticle({
                 type="file"
                 name="gambar"
                 id="gambar"
-                onChange={(e) => setGambar(e.target.files?.[0] || null)}
+                src={article.gambar}
+                // onChange={(e) => setGambar(e.target.files?.[0] || null)}
+                onChange={handleFileChange}
                 className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                required={!article}
+                defaultValue={article?.gambar ? "" : null}
               />
             </div>
             <div>
               <label
                 htmlFor="isi"
-                className="block text-sm font-medium text-gray-900 dark:text-white"
+                className="block text-sm font-medium text-gray-900 dark:text-white "
               >
                 Isi
               </label>
               <CustomEditor result={captioValue} defaultValue={isi} />
-              {/* <textarea
-                // CkEditor=
-
-                name="isi"
-                id="isi"
-                value={isi}
-                onChange={(e) => setIsi(e.target.value)}
-                rows={16}
-                className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                required
-              ></textarea> */}
             </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-            >
-              {article ? "Update Artikel" : "Tambah Artikel"}
-            </button>
+            <div className="">
+              <button
+                type="submit"
+                className="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+              >
+                {article ? "Update Artikel" : "Tambah Artikel"}
+              </button>
+            </div>
           </form>
         </div>
       </div>
